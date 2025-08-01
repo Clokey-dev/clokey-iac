@@ -7,14 +7,7 @@ resource "aws_subnet" "this" {
   tags = { Name = var.name }
 }
 
-resource "aws_route_table" "public_rt" {
-  vpc_id = var.vpc_id
-
-  tags = { Name = "${var.name}-rt" }
-}
-
-resource "aws_route_table_association" "assoc" {
-  count          = var.associate_route_table ? 1 : 0
+resource "aws_route_table_association" "this" {
   subnet_id      = aws_subnet.this.id
   route_table_id = var.route_table_id
 }

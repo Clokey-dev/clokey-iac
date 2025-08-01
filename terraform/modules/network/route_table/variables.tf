@@ -3,9 +3,9 @@ variable "vpc_id" {
   description = "VPC ID for the route table"
 }
 
-variable "subnet_ids" {
-  description = "List of subnet IDs to associate with this route table"
-  type        = list(string)
+variable "access_level" {
+  description = "Internet access enabled (예: public, private)"
+  type        = string
 }
 
 variable "gateway_id" {
@@ -14,11 +14,19 @@ variable "gateway_id" {
   description = "Internet Gateway ID for default route"
 }
 
-variable "route_table_id" {
-  type = string
+variable "destination_cidr_block" {
+  description = "(option) IGW route CIDR (default: 0.0.0.0/0)"
+  type        = string
+  default     = "0.0.0.0/0"
 }
 
 variable "name" {
   type        = string
   description = "Name tag"
+}
+
+variable "enable_igw_route" {
+  description = "Whether IGW routing is added"
+  type        = bool
+  default     = false
 }

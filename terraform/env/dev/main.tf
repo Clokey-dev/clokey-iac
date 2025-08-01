@@ -24,9 +24,8 @@ module "subnet_public_a" {
   cidr_block     = "10.0.1.0/24"
   az             = "ap-northeast-2a"
   map_public_ip  = true
-  associate_route_table = false
-  gateway_id     = module.igw.gateway_id
   name           = "${var.environment}-subnet-public-a"
+  route_table_id    = module.route_table_public.route_table_id
 }
 
 module "subnet_public_c" {
@@ -35,18 +34,17 @@ module "subnet_public_c" {
   cidr_block     = "10.0.2.0/24"
   az             = "ap-northeast-2c"
   map_public_ip  = true
-  associate_route_table = false
-  gateway_id     = module.igw.gateway_id
   name           = "${var.environment}-subnet-public-c"
+  route_table_id    = module.route_table_public.route_table_id
 }
 
 module "route_table_public" {
   source     = "../../modules/network/route_table"
   vpc_id     = module.vpc.vpc_id
-  subnet_ids = [module.subnet_public_a.subnet_id, module.subnet_public_c.subnet_id]
   gateway_id = module.igw.gateway_id
+  enable_igw_route = true
   name       = "${var.environment}-public-rt"
-  route_table_id = module.subnet_public_a.route_table_id
+  access_level = "public"
 }
 
 
@@ -61,6 +59,7 @@ module "subnet_private_a" {
   az            = "ap-northeast-2a"
   map_public_ip = false
   name          = "${var.environment}-subnet-private-a"
+  route_table_id    = module.route_table_private.route_table_id
 }
 
 module "subnet_private_c" {
@@ -70,14 +69,15 @@ module "subnet_private_c" {
   az            = "ap-northeast-2c"
   map_public_ip = false
   name          = "${var.environment}-subnet-private-c"
+  route_table_id    = module.route_table_private.route_table_id
 }
 
 module "route_table_private" {
   source     = "../../modules/network/route_table"
   vpc_id     = module.vpc.vpc_id
-  subnet_ids = [module.subnet_private_a.subnet_id, module.subnet_private_c.subnet_id]
+  enable_igw_route = false
   name       = "${var.environment}-private-rt"
-  route_table_id = module.subnet_private_a.route_table_id
+  access_level = "private"
 }
 
 module "sg" {

@@ -6,16 +6,9 @@ resource "aws_route_table" "this" {
   }
 }
 
-resource "aws_route" "default_route" {
-  for_each = var.gateway_id != "" ? { "default" = var.gateway_id } : {}
-
-  route_table_id         = var.route_table_id
+resource "aws_route" "igw" {
+  count                  = var.enable_igw_route ? 1 : 0
+  route_table_id         = aws_route_table.this.id
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = each.value
-}
-
-resource "aws_route_table_association" "this" {
-  count          = length(var.subnet_ids)
-  subnet_id      = var.subnet_ids[count.index]
-  route_table_id = aws_route_table.this.id
+  gateway_id             = var.gateway_id
 }
