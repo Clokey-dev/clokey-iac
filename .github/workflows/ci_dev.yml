@@ -1,0 +1,80 @@
+name: Terraform Development CI
+
+on:
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  terraform:
+    name: Terraform Format, Validate, Plan
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.12.2
+
+      - name: Terraform Init (dev)
+        run: terraform -chdir=terraform/env/dev init
+
+      - name: Terraform Format Check (전체)
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Plan (dev)
+        id: plan
+        run: |
+          terraform -chdir=terraform/env/dev plan \
+            -input=false \
+            -no-color \
+            -var="access_key_id=${{ secrets.DEV_AWS_ACCESS_KEY_ID }}" \
+            -var="secret_access_key=${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}" \
+            > terraform/env/dev/plan.txt
+
+      - name: Delete previous Terraform plan comments
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const planTag = "## 📝 Terraform Plan Result (dev)";
+            const comments = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+
+            for (const comment of comments.data) {
+              if (comment.body && comment.body.startsWith(planTag)) {
+                await github.rest.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: comment.id
+                });
+              }
+            }
+
+      - name: Comment PR with plan output
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const plan = fs.readFileSync('terraform/env/dev/plan.txt', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 📝 Terraform Plan Result (dev)\n\n\`\`\`terraform\n${plan}\n\`\`\``
+            });
