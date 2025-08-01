@@ -7,10 +7,9 @@ resource "aws_route_table" "this" {
 }
 
 resource "aws_route" "default_route" {
-  count                  = var.gateway_id != "" ? 1 : 0
   route_table_id         = aws_route_table.this.id
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = var.gateway_id
+  gateway_id             = var.gateway_id != "" ? var.gateway_id : null
 }
 
 resource "aws_route_table_association" "this" {
