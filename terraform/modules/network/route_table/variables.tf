@@ -14,6 +14,10 @@ variable "gateway_id" {
   description = "Internet Gateway ID for default route"
 }
 
+variable "route_table_id" {
+  type = string
+}
+
 variable "name" {
   type        = string
   description = "Name tag"

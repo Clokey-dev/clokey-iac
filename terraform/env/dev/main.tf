@@ -46,6 +46,7 @@ module "route_table_public" {
   subnet_ids = [module.subnet_public_a.subnet_id, module.subnet_public_c.subnet_id]
   gateway_id = module.igw.gateway_id
   name       = "${var.environment}-public-rt"
+  route_table_id = module.subnet_public_a.route_table_id
 }
 
 
@@ -76,6 +77,7 @@ module "route_table_private" {
   vpc_id     = module.vpc.vpc_id
   subnet_ids = [module.subnet_private_a.subnet_id, module.subnet_private_c.subnet_id]
   name       = "${var.environment}-private-rt"
+  route_table_id = module.subnet_private_a.route_table_id
 }
 
 module "sg" {
