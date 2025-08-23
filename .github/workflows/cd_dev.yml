@@ -3,7 +3,7 @@ name: Terraform Development CD
 on:
   push:
     branches:
-      - develop
+      - dev
 
 jobs:
   terraform-apply:
