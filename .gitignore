@@ -1,0 +1,33 @@
+# Default ignored files
+/.idea/
+
+# Terraform state files (local state)
+terraform.tfstate
+terraform.tfstate.backup
+.terraform.lock.hcl
+
+# Terraform variables files with sensitive data
+*.tfvars
+!example.tfvars
+
+# Terraform override files
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Terraform CLI configuration files
+.terraformrc
+terraform.rc
+
+# Terraform directories
+.terraform/
+.terraform.lock.hcl
+
+# AWS credentials and config
+.aws/
+aws.credentials
+
+# Secret tfvars files
+*.secret.tfvars
