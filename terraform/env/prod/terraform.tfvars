@@ -8,5 +8,5 @@ availability_zone  = "ap-northeast-2a"
 rds_username = "admin"
 
 # Route53 설정
-hosted_zone_id = "Z1234567890ABC" # clokey.store 도메인의 hosted zone ID (dev 환경 배포 후, 같은 값으로 변경)
-domain_name    = "prod.clokey.store"   # 실제 도메인
+hosted_zone_id = "Z1234567890ABC"    # clokey.store 도메인의 hosted zone ID (dev 환경 배포 후, 같은 값으로 변경)
+domain_name    = "prod.clokey.store" # 실제 도메인
