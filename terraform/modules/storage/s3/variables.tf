@@ -9,8 +9,14 @@ variable "environment" {
 }
 
 variable "purpose" {
-  description = "Usage purpose (ex: tfstate, image)"
+  description = "Usage purpose (ex: tfstate, image, backup)"
   type        = string
+}
+
+variable "tags" {
+  description = "Additional tags for the bucket"
+  type        = map(string)
+  default     = {}
 }
 
 variable "enable_versioning" {
@@ -25,8 +31,40 @@ variable "enable_sse" {
   default     = false
 }
 
+variable "sse_algorithm" {
+  description = "Server-side encryption algorithm (AES256 or aws:kms)"
+  type        = string
+  default     = "AES256"
+  validation {
+    condition     = contains(["AES256", "aws:kms"], var.sse_algorithm)
+    error_message = "SSE algorithm must be either AES256 or aws:kms."
+  }
+}
+
 variable "enable_block_public_access" {
-  description = "Whether internet access blocking is enabled"
+  description = "Whether to block public access to the bucket"
   type        = bool
   default     = true
+}
+
+variable "enable_lifecycle_policy" {
+  description = "Whether to enable lifecycle policy"
+  type        = bool
+  default     = false
+}
+
+variable "lifecycle_rules" {
+  description = "List of lifecycle rules for the bucket"
+  type = list(object({
+    id = string
+    status = string
+    transitions = list(object({
+      days          = number
+      storage_class = string
+    }))
+    expiration = optional(object({
+      days = number
+    }))
+  }))
+  default = []
 }

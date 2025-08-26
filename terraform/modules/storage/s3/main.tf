@@ -1,7 +1,73 @@
+# S3 버킷 생성
 resource "aws_s3_bucket" "this" {
   bucket = var.bucket_name
 
-  tags = {
-    Name = var.bucket_name
+  tags = merge(var.tags, {
+    Name        = var.bucket_name
+    Environment = var.environment
+    Purpose     = var.purpose
+    ManagedBy   = "Terraform"
+  })
+}
+
+# S3 버킷 버전 관리 설정
+resource "aws_s3_bucket_versioning" "this" {
+  count  = var.enable_versioning ? 1 : 0
+  bucket = aws_s3_bucket.this.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+# S3 버킷 서버 사이드 암호화 설정
+resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
+  count  = var.enable_sse ? 1 : 0
+  bucket = aws_s3_bucket.this.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = var.sse_algorithm
+    }
+  }
+}
+
+# S3 버킷 공개 액세스 차단 설정
+resource "aws_s3_bucket_public_access_block" "this" {
+  count  = var.enable_block_public_access ? 1 : 0
+  bucket = aws_s3_bucket.this.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+# S3 버킷 수명 주기 정책 (선택적)
+resource "aws_s3_bucket_lifecycle_configuration" "this" {
+  count  = var.enable_lifecycle_policy ? 1 : 0
+  bucket = aws_s3_bucket.this.id
+
+  dynamic "rule" {
+    for_each = var.lifecycle_rules
+    content {
+      id     = rule.value.id
+      status = rule.value.status
+
+      dynamic "transition" {
+        for_each = rule.value.transitions
+        content {
+          days          = transition.value.days
+          storage_class = transition.value.storage_class
+        }
+      }
+
+      dynamic "expiration" {
+        for_each = rule.value.expiration != null ? [rule.value.expiration] : []
+        content {
+          days = expiration.value.days
+        }
+      }
+    }
   }
 }

@@ -4,6 +4,16 @@ variable "aws_region" {
   default     = "ap-northeast-2"
 }
 
+variable "environment" {
+  description = "Environment name (dev, prod, etc.)"
+  type        = string
+  default     = "dev"
+  validation {
+    condition     = contains(["dev", "prod"], var.environment)
+    error_message = "Environment must be one of: dev, prod."
+  }
+}
+
 variable "access_key_id" {
   description = "AWS Access Key ID"
   type        = string
