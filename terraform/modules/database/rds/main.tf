@@ -1,7 +1,7 @@
 resource "aws_db_subnet_group" "this" {
   name       = var.name
   subnet_ids = var.subnet_ids
-  tags       = { Name = var.name }
+  tags       = merge(var.tags, { Name = "clokey-${var.purpose}-${var.environment}" })
 }
 
 resource "aws_db_instance" "this" {
@@ -15,5 +15,5 @@ resource "aws_db_instance" "this" {
   vpc_security_group_ids      = [var.security_group_id]
   skip_final_snapshot         = true
 
-  tags = { Name = var.name }
+  tags = merge(var.tags, { Name = "clokey-${var.purpose}-${var.environment}" })
 }

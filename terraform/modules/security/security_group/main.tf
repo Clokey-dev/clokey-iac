@@ -16,7 +16,7 @@ resource "aws_security_group" "this" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = {
-    Name = var.security_group_name
-  }
+  tags = merge(var.tags, {
+    Name = "clokey-${var.purpose}-${var.environment}"
+  })
 }

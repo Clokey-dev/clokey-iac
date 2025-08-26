@@ -10,14 +10,14 @@ module "tf_state_bucket" {
   purpose     = "tfstate"
 
   # 보안 설정
-  enable_versioning         = true
-  enable_sse               = true
-  sse_algorithm            = "AES256"
+  enable_versioning          = true
+  enable_sse                 = true
+  sse_algorithm              = "AES256"
   enable_block_public_access = true
 
   # 추가 태그
   tags = {
-    Name = "Terraform State Bucket"
+    Name        = "Terraform State Bucket"
     Environment = var.environment
   }
 }

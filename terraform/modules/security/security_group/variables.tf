@@ -48,3 +48,9 @@ variable "egress_rules" {
     }
   ]
 }
+
+variable "tags" {
+  description = "Additional tags for the security group"
+  type        = map(string)
+  default     = {}
+}

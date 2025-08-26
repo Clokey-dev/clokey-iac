@@ -12,5 +12,7 @@ module "rds" {
   db_name           = "mydb"
   username          = var.rds_username
   security_group_id = module.sg.security_group_id
+  environment       = var.environment
+  purpose           = "was"
 }
 

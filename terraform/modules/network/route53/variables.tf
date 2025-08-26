@@ -37,3 +37,9 @@ variable "ttl" {
   type        = number
   default     = 300
 }
+
+variable "tags" {
+  description = "Additional tags for the Route53 resources"
+  type        = map(string)
+  default     = {}
+}

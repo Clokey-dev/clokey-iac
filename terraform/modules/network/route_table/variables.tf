@@ -30,3 +30,19 @@ variable "enable_igw_route" {
   type        = bool
   default     = false
 }
+
+variable "environment" {
+  description = "Environment name (ex: dev or prod)"
+  type        = string
+}
+
+variable "purpose" {
+  description = "Usage purpose (ex: public, private)"
+  type        = string
+}
+
+variable "tags" {
+  description = "Additional tags for the route table"
+  type        = map(string)
+  default     = {}
+}

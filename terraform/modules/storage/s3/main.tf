@@ -3,10 +3,7 @@ resource "aws_s3_bucket" "this" {
   bucket = var.bucket_name
 
   tags = merge(var.tags, {
-    Name        = var.bucket_name
-    Environment = var.environment
-    Purpose     = var.purpose
-    ManagedBy   = "Terraform"
+    Name = "clokey-${var.purpose}-${var.environment}"
   })
 }
 

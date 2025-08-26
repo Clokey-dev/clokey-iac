@@ -56,7 +56,7 @@ variable "enable_lifecycle_policy" {
 variable "lifecycle_rules" {
   description = "List of lifecycle rules for the bucket"
   type = list(object({
-    id = string
+    id     = string
     status = string
     transitions = list(object({
       days          = number

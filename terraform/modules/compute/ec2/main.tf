@@ -5,7 +5,7 @@ resource "aws_instance" "this" {
   vpc_security_group_ids = var.security_group_id_list
   user_data              = file("${path.module}/userdata.sh") # 👈 여기 추가
 
-  tags = {
-    Name = var.name
-  }
+  tags = merge(var.tags, {
+    Name = "clokey-${var.purpose}-${var.environment}"
+  })
 }
