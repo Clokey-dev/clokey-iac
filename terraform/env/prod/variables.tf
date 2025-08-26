@@ -14,7 +14,7 @@ variable "public_subnet_cidr" {
   type = string
 }
 
-variable "availability_zone"   {
+variable "availability_zone" {
   type = string
 }
 

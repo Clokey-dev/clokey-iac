@@ -10,7 +10,7 @@ variable "access_level" {
 
 variable "gateway_id" {
   type        = string
-  default = ""
+  default     = ""
   description = "Internet Gateway ID for default route"
 }
 

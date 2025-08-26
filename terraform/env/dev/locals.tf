@@ -5,16 +5,16 @@ locals {
     Project     = "clokey"
     ManagedBy   = "terraform"
   }
-  
+
   # 이름 규칙
   name_prefix = "${var.environment}-clokey"
-  
+
   # 가용영역
   availability_zones = {
     a = "ap-northeast-2a"
     c = "ap-northeast-2c"
   }
-  
+
   # CIDR 블록
   vpc_cidr = var.vpc_cidr_block
   public_subnets = {

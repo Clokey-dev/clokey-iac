@@ -12,7 +12,7 @@ resource "aws_s3_bucket" "tf_state_bucket" {
 # S3 버킷 버전 관리 활성화
 resource "aws_s3_bucket_versioning" "tf_state_bucket" {
   bucket = aws_s3_bucket.tf_state_bucket.id
-  
+
   versioning_configuration {
     status = "Enabled"
   }

@@ -1,6 +1,6 @@
 variable "security_group_name" {
   description = "Name of security group"
-  type = string
+  type        = string
 }
 
 variable "environment" {
@@ -15,7 +15,7 @@ variable "purpose" {
 
 variable "vpc_id" {
   description = "VPC ID"
-  type = string
+  type        = string
 }
 
 variable "ingress_rules" {
