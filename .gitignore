@@ -6,10 +6,6 @@ terraform.tfstate
 terraform.tfstate.backup
 .terraform.lock.hcl
 
-# Terraform variables files with sensitive data
-*.tfvars
-!example.tfvars
-
 # Terraform override files
 *.tfvars.json
 override.tf
@@ -31,3 +27,4 @@ aws.credentials
 
 # Secret tfvars files
 *.secret.tfvars
+secret.tfvars
