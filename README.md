@@ -134,14 +134,13 @@ terraform apply -var-file="terraform.tfvars"
 | `PROD_AWS_SECRET_ACCESS_KEY` | Prod 환경 AWS Secret Key |
 
 #### 자동 배포
-- **Dev 브랜치**: `main` 브랜치에 push 시 Dev 환경 자동 배포
-- **Prod 환경**: GitHub Release 생성 시 Prod 환경 자동 배포
+- **Dev 브랜치**: `dev` 브랜치에 push 시 Dev 환경 자동 배포
+- **Prod 환경**:  `prod` 브랜치에 push 시 Prod 환경 자동 배포
 
 ## 🔒 보안 고려사항
 
 ### 파일 보안
-- `*.tfvars` 파일은 `.gitignore`에 포함되어 Git에 커밋되지 않습니다
-- `example.tfvars` 파일만 Git에 커밋되어 템플릿으로 사용됩니다
+- `example.tfvars` Git에 커밋되어 템플릿으로 사용됩니다
 - `*.secret.tfvars` 파일은 민감한 정보를 포함하며 Git에서 제외됩니다
 
 ### AWS 보안
