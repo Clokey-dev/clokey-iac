@@ -54,12 +54,12 @@ variable "root_volume_delete_on_termination" {
 variable "additional_ebs_volumes" {
   description = "List of additional EBS volumes to attach"
   type = list(object({
-    device_name = string
-    size        = number
-    volume_type = string
-    encrypted   = bool
+    device_name           = string
+    size                  = number
+    volume_type           = string
+    encrypted             = bool
     delete_on_termination = bool
-    tags        = map(string)
+    tags                  = map(string)
   }))
   default = []
 }

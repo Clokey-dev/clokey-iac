@@ -1,15 +1,15 @@
 # EC2 인스턴스 생성
 resource "aws_instance" "this" {
-  ami                    = var.ami
-  instance_type          = var.instance_type
-  subnet_id              = var.subnet_id
-  vpc_security_group_ids = var.security_group_id_list
-  key_name               = var.key_name
-  private_ip             = var.private_ip
-  associate_public_ip_address = var.associate_public_ip_address
-  disable_api_termination     = var.disable_api_termination
+  ami                                  = var.ami
+  instance_type                        = var.instance_type
+  subnet_id                            = var.subnet_id
+  vpc_security_group_ids               = var.security_group_id_list
+  key_name                             = var.key_name
+  private_ip                           = var.private_ip
+  associate_public_ip_address          = var.associate_public_ip_address
+  disable_api_termination              = var.disable_api_termination
   instance_initiated_shutdown_behavior = var.instance_initiated_shutdown_behavior
-  monitoring = var.monitoring
+  monitoring                           = var.monitoring
 
   # 사용자 데이터 설정 (변수로 주입받거나 기본 파일 사용)
   user_data                   = var.user_data != null ? var.user_data : file("${path.module}/userdata.sh")
@@ -24,7 +24,7 @@ resource "aws_instance" "this" {
   }
 
   tags = merge(var.tags, {
-    Name = "clokey-${var.purpose}-${var.environment}"
+    Name         = "clokey-${var.purpose}-${var.environment}"
     InstanceName = var.name
   })
 }
@@ -39,7 +39,7 @@ resource "aws_ebs_volume" "additional" {
   encrypted         = var.additional_ebs_volumes[count.index].encrypted
 
   tags = merge(var.additional_ebs_volumes[count.index].tags, {
-    Name = "clokey-${var.purpose}-${var.environment}-vol-${count.index + 1}"
+    Name         = "clokey-${var.purpose}-${var.environment}-vol-${count.index + 1}"
     InstanceName = var.name
   })
 }

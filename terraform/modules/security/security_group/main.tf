@@ -6,10 +6,10 @@ resource "aws_security_group" "this" {
   dynamic "ingress" {
     for_each = var.ingress_rules
     content {
-      from_port   = ingress.value.from_port
-      to_port     = ingress.value.to_port
-      protocol    = ingress.value.protocol
-      cidr_blocks = ingress.value.use_cidr ? ingress.value.cidr_blocks : null
+      from_port       = ingress.value.from_port
+      to_port         = ingress.value.to_port
+      protocol        = ingress.value.protocol
+      cidr_blocks     = ingress.value.use_cidr ? ingress.value.cidr_blocks : null
       security_groups = ingress.value.use_sg ? [ingress.value.source_security_group_id] : null
     }
   }

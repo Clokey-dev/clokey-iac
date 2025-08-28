@@ -41,7 +41,7 @@ output "root_block_device" {
 output "additional_ebs_volumes" {
   description = "Additional EBS Volumes"
   value = {
-    volumes = aws_ebs_volume.additional[*].id
+    volumes     = aws_ebs_volume.additional[*].id
     attachments = aws_volume_attachment.additional[*].id
   }
 }

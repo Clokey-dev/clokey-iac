@@ -4,7 +4,7 @@ resource "aws_vpc" "this" {
   enable_dns_hostnames = true
 
   tags = merge(var.tags, {
-    Name = "clokey-${var.purpose}-${var.environment}"
+    Name    = "clokey-${var.purpose}-${var.environment}"
     VPCName = var.name
   })
 }
