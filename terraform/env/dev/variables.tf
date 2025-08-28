@@ -55,3 +55,10 @@ variable "aws_account_id" {
   type        = string
   sensitive   = true
 }
+
+variable "user_data" {
+  description = "Custom user data script for EC2 instances"
+  type        = string
+  default     = null
+  sensitive   = true
+}

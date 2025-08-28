@@ -35,3 +35,16 @@ variable "domain_name" {
   default     = "example.com"
   sensitive   = true
 }
+
+variable "aws_account_id" {
+  description = "AWS Account ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "user_data" {
+  description = "Custom user data script for EC2 instances"
+  type        = string
+  default     = null
+  sensitive   = true
+}
