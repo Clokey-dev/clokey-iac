@@ -9,8 +9,9 @@ variable "name" {
 }
 
 variable "environment" {
-  description = "Environment name (ex: dev or prod)"
+  description = "Environment name (ex: dev or prod) - optional for shared resources"
   type        = string
+  default     = null
 }
 
 variable "purpose" {

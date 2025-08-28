@@ -1,7 +1,7 @@
 resource "aws_internet_gateway" "this" {
   vpc_id = var.vpc_id
-  tags = merge(var.tags, {
-    Name    = "clokey-${var.purpose}-${var.environment}"
+  tags = merge(var.tags, { 
+    Name    = var.environment != null ? "clokey-${var.purpose}-${var.environment}" : "clokey-${var.purpose}"
     IGWName = var.name
   })
 }

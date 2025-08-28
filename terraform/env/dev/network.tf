@@ -3,7 +3,6 @@ module "vpc" {
   source      = "../../modules/network/vpc"
   cidr_block  = local.vpc_cidr
   name        = "${local.name_prefix}-vpc"
-  environment = local.environment
   purpose     = "main"
 }
 
@@ -12,7 +11,6 @@ module "igw" {
   source      = "../../modules/network/igw"
   vpc_id      = module.vpc.vpc_id
   name        = "${local.name_prefix}-igw"
-  environment = local.environment
   purpose     = "main"
 }
 
@@ -24,7 +22,6 @@ module "route_table_public" {
   enable_igw_route = true
   name             = "${local.name_prefix}-public-rt"
   access_level     = "public"
-  environment      = local.environment
   purpose          = "public"
 }
 
@@ -35,7 +32,6 @@ module "route_table_private" {
   enable_igw_route = false
   name             = "${local.name_prefix}-private-rt"
   access_level     = "private"
-  environment      = local.environment
   purpose          = "private"
 }
 
