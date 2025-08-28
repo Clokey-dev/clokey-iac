@@ -23,11 +23,6 @@ output "subnet_id" {
   value       = aws_instance.this.subnet_id
 }
 
-output "vpc_id" {
-  description = "EC2 Instance VPC ID"
-  value       = aws_instance.this.vpc_id
-}
-
 output "arn" {
   description = "EC2 Instance ARN"
   value       = aws_instance.this.arn

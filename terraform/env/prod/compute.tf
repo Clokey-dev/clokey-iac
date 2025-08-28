@@ -6,7 +6,7 @@ module "ec2" {
   subnet_id              = module.subnet_public_a.subnet_id
   name                   = "${local.name_prefix}-ec2"
   security_group_id_list = [module.sg.security_group_id]
-  environment            = var.environment
+  environment            = local.environment
   purpose                = "was"
   
   # SSH 키 설정 (AWS에서 미리 생성한 키 페어 이름)

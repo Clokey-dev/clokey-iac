@@ -3,7 +3,7 @@ module "vpc" {
   source      = "../../modules/network/vpc"
   cidr_block  = local.vpc_cidr
   name        = "${local.name_prefix}-vpc"
-  environment = var.environment
+  environment = local.environment
   purpose     = "main"
 }
 
@@ -12,7 +12,7 @@ module "igw" {
   source      = "../../modules/network/igw"
   vpc_id      = module.vpc.vpc_id
   name        = "${local.name_prefix}-igw"
-  environment = var.environment
+  environment = local.environment
   purpose     = "main"
 }
 
@@ -24,7 +24,7 @@ module "route_table_public" {
   enable_igw_route = true
   name             = "${local.name_prefix}-public-rt"
   access_level     = "public"
-  environment      = var.environment
+  environment      = local.environment
   purpose          = "public"
 }
 
@@ -35,7 +35,7 @@ module "route_table_private" {
   enable_igw_route = false
   name             = "${local.name_prefix}-private-rt"
   access_level     = "private"
-  environment      = var.environment
+  environment      = local.environment
   purpose          = "private"
 }
 
@@ -48,7 +48,7 @@ module "subnet_public_a" {
   map_public_ip  = true
   name           = "${local.name_prefix}-subnet-public-a"
   route_table_id = module.route_table_public.route_table_id
-  environment    = var.environment
+  environment    = local.environment
   purpose        = "public"
 }
 
@@ -60,7 +60,7 @@ module "subnet_public_c" {
   map_public_ip  = true
   name           = "${local.name_prefix}-subnet-public-c"
   route_table_id = module.route_table_public.route_table_id
-  environment    = var.environment
+  environment    = local.environment
   purpose        = "public"
 }
 
@@ -73,7 +73,7 @@ module "subnet_private_a" {
   map_public_ip  = false
   name           = "${local.name_prefix}-subnet-private-a"
   route_table_id = module.route_table_private.route_table_id
-  environment    = var.environment
+  environment    = local.environment
   purpose        = "private"
 }
 
@@ -85,7 +85,7 @@ module "subnet_private_c" {
   map_public_ip  = false
   name           = "${local.name_prefix}-subnet-private-c"
   route_table_id = module.route_table_private.route_table_id
-  environment    = var.environment
+  environment    = local.environment
   purpose        = "private"
 }
 
@@ -94,7 +94,7 @@ module "sg" {
   source = "../../modules/security/security_group"
   vpc_id = module.vpc.vpc_id
 
-  environment         = var.environment
+  environment         = local.environment
   purpose             = "was"
   security_group_name = "${local.name_prefix}-sg"
 
@@ -155,7 +155,7 @@ module "route53" {
 
   # A 레코드 생성
   create_a_record = true
-  record_name     = "${var.environment}.${var.domain_name}"
+  record_name     = "${local.environment}.${var.domain_name}"
   target_ip       = module.ec2.public_ip
   ttl             = 300
 }

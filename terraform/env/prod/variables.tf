@@ -1,34 +1,37 @@
-variable "aws_region" {
-  description = "AWS region for the infrastructure"
+# AWS 인증 정보 (CI/CD에서 관리)
+variable "aws_access_key_id" {
+  description = "AWS Access Key ID"
   type        = string
+  sensitive   = true
 }
 
-variable "environment" {
-  description = "Environment name (dev, prod, etc.)"
+variable "aws_secret_access_key" {
+  description = "AWS Secret Access Key"
   type        = string
+  sensitive   = true
 }
 
-variable "vpc_cidr_block" {
-  description = "CIDR block for the VPC"
-  type        = string
-}
-
-variable "public_subnet_cidr" {
-  description = "CIDR block for the public subnet"
-  type        = string
-}
-
-variable "availability_zone" {
-  description = "Availability zone for the subnet"
-  type        = string
-}
-
+# 민감한 정보만 변수화 (CI/CD에서 관리)
 variable "rds_username" {
   description = "Username for RDS database"
   type        = string
   sensitive   = true
 }
 
+variable "rds_password" {
+  description = "Password for RDS database"
+  type        = string
+  sensitive   = true
+}
+
+variable "user_data" {
+  description = "Custom user data script for EC2 instances"
+  type        = string
+  default     = null
+  sensitive   = true
+}
+
+# Route53 설정 (도메인 관련)
 variable "hosted_zone_id" {
   description = "Route53 hosted zone ID for domain"
   type        = string
@@ -39,18 +42,5 @@ variable "domain_name" {
   description = "Base domain name for Route53 records"
   type        = string
   default     = "example.com"
-  sensitive   = true
-}
-
-variable "aws_account_id" {
-  description = "AWS Account ID"
-  type        = string
-  sensitive   = true
-}
-
-variable "user_data" {
-  description = "Custom user data script for EC2 instances"
-  type        = string
-  default     = null
   sensitive   = true
 }

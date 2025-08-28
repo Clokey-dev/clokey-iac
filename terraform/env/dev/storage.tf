@@ -2,7 +2,7 @@
 module "s3" {
   source      = "../../modules/storage/s3"
   bucket_name = "${local.name_prefix}-bucket"
-  environment = var.environment
+  environment = local.environment
   purpose     = "storage"
 }
 
