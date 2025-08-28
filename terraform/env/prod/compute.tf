@@ -5,7 +5,7 @@ module "ec2" {
   instance_type          = "t3.micro"
   subnet_id              = module.subnet_public_a.subnet_id
   name                   = "${local.name_prefix}-ec2"
-  security_group_id_list = [module.sg.security_group_id]
+  security_group_id_list = [module.sg_ec2.security_group_id]
   environment            = local.environment
   purpose                = "was"
 

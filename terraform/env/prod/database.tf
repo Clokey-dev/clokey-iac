@@ -12,7 +12,7 @@ module "rds" {
   instance_class    = "db.t3.small"
   db_name           = "mydb"
   username          = var.rds_username
-  security_group_id = module.sg.security_group_id
+  security_group_id = module.sg_rds.security_group_id
   environment       = local.environment
   purpose           = "app"
 

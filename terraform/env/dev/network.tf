@@ -1,17 +1,17 @@
 # VPC
 module "vpc" {
-  source      = "../../modules/network/vpc"
-  cidr_block  = "10.0.0.0/16"
-  name        = "${local.name_prefix}-vpc"
-  purpose     = "main"
+  source     = "../../modules/network/vpc"
+  cidr_block = "10.0.0.0/16"
+  name       = "${local.name_prefix}-vpc"
+  purpose    = "main"
 }
 
 # Internet Gateway
 module "igw" {
-  source      = "../../modules/network/igw"
-  vpc_id      = module.vpc.vpc_id
-  name        = "${local.name_prefix}-igw"
-  purpose     = "main"
+  source  = "../../modules/network/igw"
+  vpc_id  = module.vpc.vpc_id
+  name    = "${local.name_prefix}-igw"
+  purpose = "main"
 }
 
 # Public Route Table
@@ -85,14 +85,14 @@ module "subnet_private_c" {
   purpose        = "private"
 }
 
-# Security Group
-module "sg" {
+# EC2 Security Group
+module "sg_ec2" {
   source = "../../modules/security/security_group"
   vpc_id = module.vpc.vpc_id
 
   environment         = local.environment
-  purpose             = "was"
-  security_group_name = "${local.name_prefix}-sg"
+  purpose             = "ec2"
+  security_group_name = "${local.name_prefix}-sg-ec2"
 
   ingress_rules = [
     {
@@ -126,6 +126,38 @@ module "sg" {
       use_cidr    = true
       use_sg      = false
       cidr_blocks = ["0.0.0.0/0"]
+    }
+  ]
+
+  egress_rules = [
+    {
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      use_cidr    = true
+      use_sg      = false
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  ]
+}
+
+# RDS Security Group
+module "sg_rds" {
+  source = "../../modules/security/security_group"
+  vpc_id = module.vpc.vpc_id
+
+  environment         = local.environment
+  purpose             = "rds"
+  security_group_name = "${local.name_prefix}-sg-rds"
+
+  ingress_rules = [
+    {
+      from_port                = 3306
+      to_port                  = 3306
+      protocol                 = "tcp"
+      use_cidr                 = false
+      use_sg                   = true
+      source_security_group_id = module.sg_ec2.security_group_id
     }
   ]
 

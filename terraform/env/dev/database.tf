@@ -12,7 +12,7 @@ module "rds" {
   instance_class    = "db.t3.micro"
   db_name           = "mydb"
   username          = var.rds_username
-  security_group_id = module.sg.security_group_id
+  security_group_id = module.sg_rds.security_group_id
   environment       = local.environment
   purpose           = "app"
 
@@ -31,5 +31,18 @@ module "rds" {
 
   # 보안 설정
   deletion_protection = false # 개발 환경에서는 삭제 보호 비활성화
+
+  # 파라미터 그룹 설정
+  parameter_group_family = "mysql8.0"
+  parameter_group_parameters = [
+    {
+      name  = "max_connections"
+      value = "100"
+    },
+    {
+      name  = "innodb_buffer_pool_size"
+      value = "{DBInstanceClassMemory*3/4}"
+    }
+  ]
 }
 
