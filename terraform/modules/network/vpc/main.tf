@@ -5,5 +5,6 @@ resource "aws_vpc" "this" {
 
   tags = merge(var.tags, {
     Name = "clokey-${var.purpose}-${var.environment}"
+    VPCName = var.name
   })
 }

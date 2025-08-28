@@ -25,6 +25,7 @@ resource "aws_instance" "this" {
 
   tags = merge(var.tags, {
     Name = "clokey-${var.purpose}-${var.environment}"
+    InstanceName = var.name
   })
 }
 
@@ -39,6 +40,7 @@ resource "aws_ebs_volume" "additional" {
 
   tags = merge(var.additional_ebs_volumes[count.index].tags, {
     Name = "clokey-${var.purpose}-${var.environment}-vol-${count.index + 1}"
+    InstanceName = var.name
   })
 }
 

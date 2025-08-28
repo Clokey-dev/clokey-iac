@@ -4,7 +4,10 @@ resource "aws_subnet" "this" {
   availability_zone       = var.az
   map_public_ip_on_launch = var.map_public_ip
 
-  tags = merge(var.tags, { Name = "clokey-${var.purpose}-${var.environment}" })
+  tags = merge(var.tags, { 
+    Name = "clokey-${var.purpose}-${var.environment}"
+    SubnetName = var.name
+  })
 }
 
 resource "aws_route_table_association" "this" {

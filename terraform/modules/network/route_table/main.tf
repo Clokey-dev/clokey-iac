@@ -3,6 +3,7 @@ resource "aws_route_table" "this" {
 
   tags = merge(var.tags, {
     Name = "clokey-${var.purpose}-${var.environment}"
+    RouteTableName = var.name
   })
 }
 
