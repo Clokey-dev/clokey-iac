@@ -1,1 +1,4 @@
-output "gateway_id" { value = aws_internet_gateway.this.id }
+output "gateway_id" {
+  description = "Internet Gateway ID"
+  value       = aws_internet_gateway.this.id
+}

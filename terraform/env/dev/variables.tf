@@ -1,26 +1,32 @@
 variable "aws_region" {
-  type = string
+  description = "AWS region for the infrastructure"
+  type        = string
 }
 
 variable "environment" {
-  type = string
+  description = "Environment name (dev, prod, etc.)"
+  type        = string
 }
 
 variable "vpc_cidr_block" {
-  type = string
+  description = "CIDR block for the VPC"
+  type        = string
 }
 
 variable "public_subnet_cidr" {
-  type = string
+  description = "CIDR block for the public subnet"
+  type        = string
 }
 
 variable "availability_zone" {
-  type = string
+  description = "Availability zone for the subnet"
+  type        = string
 }
 
 variable "rds_username" {
-  type      = string
-  sensitive = true
+  description = "Username for RDS database"
+  type        = string
+  sensitive   = true
 }
 
 variable "hosted_zone_id" {

@@ -1,15 +1,31 @@
-variable "vpc_id" { type = string }
+variable "vpc_id" {
+  description = "VPC ID where the subnet will be created"
+  type        = string
+}
 
-variable "cidr_block" { type = string }
+variable "cidr_block" {
+  description = "CIDR block for the subnet"
+  type        = string
+}
 
-variable "az" { type = string }
+variable "az" {
+  description = "Availability zone for the subnet"
+  type        = string
+}
 
-variable "map_public_ip" { type = bool }
+variable "map_public_ip" {
+  description = "Whether to map public IP on launch"
+  type        = bool
+}
 
-variable "name" { type = string }
+variable "name" {
+  description = "Name of the subnet"
+  type        = string
+}
 
 variable "route_table_id" {
-  type = string
+  description = "Route table ID to associate with the subnet"
+  type        = string
 }
 
 variable "environment" {

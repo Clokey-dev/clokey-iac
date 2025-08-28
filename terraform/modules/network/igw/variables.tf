@@ -1,6 +1,12 @@
-variable "vpc_id" { type = string }
+variable "vpc_id" {
+  description = "VPC ID where the internet gateway will be attached"
+  type        = string
+}
 
-variable "name" { type = string }
+variable "name" {
+  description = "Name of the internet gateway"
+  type        = string
+}
 
 variable "environment" {
   description = "Environment name (ex: dev or prod)"

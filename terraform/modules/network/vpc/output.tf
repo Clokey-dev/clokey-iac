@@ -1,1 +1,4 @@
-output "vpc_id" { value = aws_vpc.this.id }
+output "vpc_id" {
+  description = "VPC ID"
+  value       = aws_vpc.this.id
+}
