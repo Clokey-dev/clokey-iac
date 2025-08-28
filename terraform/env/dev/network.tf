@@ -1,7 +1,7 @@
 # VPC
 module "vpc" {
   source      = "../../modules/network/vpc"
-  cidr_block  = local.vpc_cidr
+  cidr_block  = "10.0.0.0/16"
   name        = "${local.name_prefix}-vpc"
   purpose     = "main"
 }
@@ -39,8 +39,8 @@ module "route_table_private" {
 module "subnet_public_a" {
   source         = "../../modules/network/subnet"
   vpc_id         = module.vpc.vpc_id
-  cidr_block     = local.public_subnets.a
-  az             = local.availability_zones.a
+  cidr_block     = "10.0.1.0/24"
+  az             = "ap-northeast-2a"
   map_public_ip  = true
   name           = "${local.name_prefix}-subnet-public-a"
   route_table_id = module.route_table_public.route_table_id
@@ -51,8 +51,8 @@ module "subnet_public_a" {
 module "subnet_public_c" {
   source         = "../../modules/network/subnet"
   vpc_id         = module.vpc.vpc_id
-  cidr_block     = local.public_subnets.c
-  az             = local.availability_zones.c
+  cidr_block     = "10.0.2.0/24"
+  az             = "ap-northeast-2c"
   map_public_ip  = true
   name           = "${local.name_prefix}-subnet-public-c"
   route_table_id = module.route_table_public.route_table_id
@@ -64,8 +64,8 @@ module "subnet_public_c" {
 module "subnet_private_a" {
   source         = "../../modules/network/subnet"
   vpc_id         = module.vpc.vpc_id
-  cidr_block     = local.private_subnets.a
-  az             = local.availability_zones.a
+  cidr_block     = "10.0.11.0/24"
+  az             = "ap-northeast-2a"
   map_public_ip  = false
   name           = "${local.name_prefix}-subnet-private-a"
   route_table_id = module.route_table_private.route_table_id
@@ -76,8 +76,8 @@ module "subnet_private_a" {
 module "subnet_private_c" {
   source         = "../../modules/network/subnet"
   vpc_id         = module.vpc.vpc_id
-  cidr_block     = local.private_subnets.c
-  az             = local.availability_zones.c
+  cidr_block     = "10.0.12.0/24"
+  az             = "ap-northeast-2c"
   map_public_ip  = false
   name           = "${local.name_prefix}-subnet-private-c"
   route_table_id = module.route_table_private.route_table_id
