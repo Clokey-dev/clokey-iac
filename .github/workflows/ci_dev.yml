@@ -46,7 +46,7 @@ jobs:
             -var="rds_username=${{ secrets.RDS_USERNAME }}" \
             -var="rds_password=${{ secrets.RDS_PASSWORD }}" \
             -var="user_data=${{ secrets.USER_DATA }}" \
-            -var="domain_name=${{ secrets.DOMAIN_NAME }}" \
+            -var="domain_name=${{ secrets.DEV_DOMAIN_NAME }}" \
             > terraform/env/dev/plan.txt
 
       - name: Delete previous Terraform plan comments
