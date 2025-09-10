@@ -1,8 +1,7 @@
 provider "aws" {
   region = local.aws_region
 
-  access_key = var.aws_access_key_id
-  secret_key = var.aws_secret_access_key
+  # AWS 자격증명은 환경변수(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)에서 자동으로 가져옴
 
   default_tags {
     tags = local.common_tags

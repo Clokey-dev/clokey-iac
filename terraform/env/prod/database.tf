@@ -10,7 +10,7 @@ module "rds" {
   engine            = "mysql"
   engine_version    = "8.0.35"
   instance_class    = "db.t3.small"
-  db_name           = "mydb"
+  db_name           = "clokey_db"
   username          = var.rds_username
   security_group_id = module.sg_rds.security_group_id
   environment       = local.environment

@@ -4,7 +4,7 @@ module "ec2" {
   ami                    = data.aws_ami.amazon_linux_2023.id
   instance_type          = "t3.micro"
   subnet_id              = module.subnet_public_a.subnet_id
-  name                   = "${local.name_prefix}-ec2"
+  name                   = "${local.name_prefix}-api"
   security_group_id_list = [module.sg_ec2.security_group_id]
   environment            = local.environment
   purpose                = "was"
@@ -28,5 +28,12 @@ module "ec2" {
 
   # 사용자 데이터 (GitHub Secrets에서 주입)
   user_data = var.user_data
+}
+
+# ALB Target Group 추가
+resource "aws_lb_target_group_attachment" "ec2" {
+  target_group_arn = module.alb.target_group_arn
+  target_id        = module.ec2.instance_id
+  port             = 8080
 }
 

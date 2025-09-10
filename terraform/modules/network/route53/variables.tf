@@ -30,6 +30,19 @@ variable "record_name" {
 variable "target_ip" {
   description = "Target IP address for the A record"
   type        = string
+  default     = null
+}
+
+variable "target_alias" {
+  description = "Target alias (e.g., ALB DNS name) for the A record"
+  type        = string
+  default     = null
+}
+
+variable "target_zone_id" {
+  description = "Target zone ID for alias records (e.g., ALB zone ID)"
+  type        = string
+  default     = null
 }
 
 variable "ttl" {

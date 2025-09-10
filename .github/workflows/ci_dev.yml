@@ -37,17 +37,15 @@ jobs:
 
       - name: Terraform Plan (dev)
         id: plan
+        working-directory: terraform/env/dev
         run: |
-          terraform -chdir=terraform/env/dev plan \
+          terraform plan \
             -input=false \
             -no-color \
-            -var="aws_access_key_id=${{ secrets.DEV_AWS_ACCESS_KEY_ID }}" \
-            -var="aws_secret_access_key=${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}" \
-            -var="rds_username=${{ secrets.RDS_USERNAME }}" \
             -var="rds_password=${{ secrets.RDS_PASSWORD }}" \
             -var="user_data=${{ secrets.USER_DATA }}" \
-            -var="domain_name=${{ secrets.DOMAIN_NAME }}" \
-            > terraform/env/dev/plan.txt
+            -var="domain_name=${{ secrets.DEV_DOMAIN_NAME }}" \
+            > plan.txt
 
       - name: Delete previous Terraform plan comments
         uses: actions/github-script@v7

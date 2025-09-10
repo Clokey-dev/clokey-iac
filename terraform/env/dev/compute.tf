@@ -27,3 +27,10 @@ module "ec2" {
   user_data = var.user_data
 }
 
+# ALB Target Group 추가
+resource "aws_lb_target_group_attachment" "ec2" {
+  target_group_arn = module.alb.target_group_arn
+  target_id        = module.ec2.instance_id
+  port             = 8080
+}
+

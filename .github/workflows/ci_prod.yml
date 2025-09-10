@@ -37,8 +37,9 @@ jobs:
 
       - name: Terraform Plan (prod)
         id: plan
+        working-directory: terraform/env/prod
         run: |
-          terraform -chdir=terraform/env/prod plan \
+          terraform plan \
             -input=false \
             -no-color \
             -var="aws_access_key_id=${{ secrets.PROD_AWS_ACCESS_KEY_ID }}" \
@@ -46,8 +47,8 @@ jobs:
             -var="rds_username=${{ secrets.RDS_USERNAME }}" \
             -var="rds_password=${{ secrets.RDS_PASSWORD }}" \
             -var="user_data=${{ secrets.USER_DATA }}" \
-            -var="domain_name=${{ secrets.DOMAIN_NAME }}" \
-            > terraform/env/prod/plan.txt
+            -var="domain_name=${{ secrets.PROD_DOMAIN_NAME }}" \
+            > plan.txt
 
       - name: Delete previous Terraform plan comments
         uses: actions/github-script@v7

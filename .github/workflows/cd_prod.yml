@@ -33,8 +33,9 @@ jobs:
         run: terraform -chdir=terraform/env/prod init
 
       - name: Terraform Apply (prod)
+        working-directory: terraform/env/prod
         run: |
-          terraform -chdir=terraform/env/prod apply \
+          terraform apply \
             -auto-approve \
             -input=false \
             -var="aws_access_key_id=${{ secrets.PROD_AWS_ACCESS_KEY_ID }}" \
@@ -42,4 +43,4 @@ jobs:
             -var="rds_username=${{ secrets.RDS_USERNAME }}" \
             -var="rds_password=${{ secrets.RDS_PASSWORD }}" \
             -var="user_data=${{ secrets.USER_DATA }}" \
-            -var="domain_name=${{ secrets.DOMAIN_NAME }}"
+            -var="domain_name=${{ secrets.PROD_DOMAIN_NAME }}"
