@@ -8,7 +8,7 @@ resource "aws_route53_zone" "main" {
 
 # Route53 A Record (IP)
 resource "aws_route53_record" "a" {
-  count = var.create_a_record && var.target_ip != null ? 1 : 0
+  count = var.create_a_record && var.target_ip != null && var.record_name != null ? 1 : 0
 
   zone_id = var.hosted_zone_id != null ? var.hosted_zone_id : (var.create_hosted_zone ? aws_route53_zone.main[0].zone_id : null)
   name    = var.record_name
@@ -19,7 +19,7 @@ resource "aws_route53_record" "a" {
 
 # Route53 A Record (ALB Alias)
 resource "aws_route53_record" "alias" {
-  count = var.create_a_record && var.target_alias != null && var.target_zone_id != null ? 1 : 0
+  count = var.create_a_record && var.target_alias != null && var.target_zone_id != null && var.record_name != null ? 1 : 0
 
   zone_id = var.hosted_zone_id != null ? var.hosted_zone_id : (var.create_hosted_zone ? aws_route53_zone.main[0].zone_id : null)
   name    = var.record_name
