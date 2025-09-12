@@ -39,12 +39,18 @@ jobs:
         id: plan
         working-directory: terraform/env/dev
         run: |
+          # user_data를 별도 파일로 생성 (긴 멀티라인 스크립트 처리)
+          echo 'user_data = <<-EOF' > user_data.tfvars
+          echo '${{ secrets.USER_DATA }}' >> user_data.tfvars
+          echo 'EOF' >> user_data.tfvars
+          
+          # terraform plan 실행
           terraform plan \
             -input=false \
             -no-color \
             -var="rds_password=${{ secrets.RDS_PASSWORD }}" \
-            -var="user_data=${{ secrets.USER_DATA }}" \
             -var="domain_name=${{ secrets.DEV_DOMAIN_NAME }}" \
+            -var-file="user_data.tfvars" \
             > plan.txt
 
       - name: Delete previous Terraform plan comments
