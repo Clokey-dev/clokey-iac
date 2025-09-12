@@ -15,5 +15,11 @@ output "domain_name" {
 
 output "record_name" {
   description = "Name of the A record"
-  value       = var.create_a_record ? (var.target_ip != null ? aws_route53_record.a[0].name : aws_route53_record.alias[0].name) : null
+  value = var.create_a_record ? (
+    var.target_ip != null ? (
+      length(aws_route53_record.a) > 0 ? aws_route53_record.a[0].name : null
+      ) : (
+      length(aws_route53_record.alias) > 0 ? aws_route53_record.alias[0].name : null
+    )
+  ) : null
 }

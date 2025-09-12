@@ -219,7 +219,7 @@ module "acm" {
 
   name_prefix    = local.name_prefix
   domain_name    = var.domain_name
-  hosted_zone_id = module.route53.hosted_zone_id
+  hosted_zone_id = module.route53_zone.hosted_zone_id
 
   tags = local.common_tags
 }
@@ -245,13 +245,23 @@ module "alb" {
   tags = local.common_tags
 }
 
-# Route53 - ALB를 A 레코드로 설정 (새로운 hosted zone 생성)
-module "route53" {
+# Route53 - Hosted Zone 생성
+module "route53_zone" {
   source = "../../modules/network/route53"
 
   # 새로운 hosted zone 생성
   create_hosted_zone = true
   domain_name        = var.domain_name
+  create_a_record    = false
+}
+
+# Route53 - ALB를 A 레코드로 설정 (ALB 생성 후)
+module "route53_record" {
+  source = "../../modules/network/route53"
+
+  # 기존 hosted zone 사용
+  create_hosted_zone = false
+  hosted_zone_id     = module.route53_zone.hosted_zone_id
 
   # A 레코드 생성 (ALB로 변경)
   create_a_record = true
@@ -259,4 +269,6 @@ module "route53" {
   target_alias    = module.alb.load_balancer_dns_name
   target_zone_id  = module.alb.load_balancer_zone_id
   ttl             = 300
+
+  depends_on = [module.alb]
 }
