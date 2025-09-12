@@ -25,6 +25,7 @@ variable "create_a_record" {
 variable "record_name" {
   description = "Name for the A record (e.g., 'api.example.com')"
   type        = string
+  default     = null
 }
 
 variable "target_ip" {
