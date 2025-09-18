@@ -27,3 +27,14 @@ output "bucket_region" {
   description = "The AWS region this bucket resides in"
   value       = aws_s3_bucket.this.region
 }
+
+output "bucket_website_endpoint" {
+  description = "The website endpoint of the bucket"
+  value       = aws_s3_bucket.this.website_endpoint
+  # Note: website_endpoint is deprecated, but kept for backward compatibility
+}
+
+output "bucket_public_url" {
+  description = "The public URL for accessing objects in the bucket"
+  value       = "https://${aws_s3_bucket.this.bucket_domain_name}"
+}

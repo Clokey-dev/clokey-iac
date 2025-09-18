@@ -40,6 +40,28 @@ resource "aws_s3_bucket_public_access_block" "this" {
   restrict_public_buckets = true
 }
 
+# S3 버킷 공개 읽기 정책 (GET만 허용)
+resource "aws_s3_bucket_policy" "public_read" {
+  count  = var.enable_public_read ? 1 : 0
+  bucket = aws_s3_bucket.this.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect    = "Allow"
+        Principal = "*"
+        Action = [
+          "s3:GetObject"
+        ]
+        Resource = "${aws_s3_bucket.this.arn}/*"
+      }
+    ]
+  })
+
+  depends_on = [aws_s3_bucket_public_access_block.this]
+}
+
 # S3 버킷 수명 주기 정책 (선택적)
 resource "aws_s3_bucket_lifecycle_configuration" "this" {
   count  = var.enable_lifecycle_policy ? 1 : 0

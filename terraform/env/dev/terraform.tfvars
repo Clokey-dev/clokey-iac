@@ -4,11 +4,11 @@ vpc_cidr_block     = "10.0.0.0/16"
 public_subnet_cidr = "10.0.1.0/24"
 availability_zone  = "ap-northeast-2a"
 
-# RDS 설정 (기본값)
-rds_username = "admin"
+# RDS 설정 (기본값 - 민감한 정보는 secret.tfvars에서 관리)
+# rds_username은 secret.tfvars에서 관리
 
-# Route53 설정 (기본값)
-domain_name = "dev.clokey.store"
+# Route53 설정 (기본값 - 민감한 정보는 secret.tfvars에서 관리)
+# domain_name은 secret.tfvars에서 관리
 
-# User Data 기본값 (필요시 CI에서 오버라이드)
+# User Data (기본값 - 민감한 정보는 secret.tfvars에서 관리)
 user_data = null

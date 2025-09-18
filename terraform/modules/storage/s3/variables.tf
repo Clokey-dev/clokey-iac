@@ -47,6 +47,12 @@ variable "enable_block_public_access" {
   default     = true
 }
 
+variable "enable_public_read" {
+  description = "Whether to enable public read access (GET only)"
+  type        = bool
+  default     = false
+}
+
 variable "enable_lifecycle_policy" {
   description = "Whether to enable lifecycle policy"
   type        = bool

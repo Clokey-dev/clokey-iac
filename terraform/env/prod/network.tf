@@ -96,32 +96,16 @@ module "sg_ec2" {
 
   ingress_rules = [
     {
-      from_port                = 8080
-      to_port                  = 8080
+      from_port                = 80
+      to_port                  = 80
       protocol                 = "tcp"
       use_cidr                 = false
       use_sg                   = true
       source_security_group_id = module.sg_alb.security_group_id
     },
     {
-      from_port   = 443
-      to_port     = 443
-      protocol    = "tcp"
-      use_cidr    = true
-      use_sg      = false
-      cidr_blocks = ["0.0.0.0/0"]
-    },
-    {
       from_port   = 22
       to_port     = 22
-      protocol    = "tcp"
-      use_cidr    = true
-      use_sg      = false
-      cidr_blocks = ["0.0.0.0/0"]
-    },
-    {
-      from_port   = 80
-      to_port     = 80
       protocol    = "tcp"
       use_cidr    = true
       use_sg      = false
@@ -234,7 +218,7 @@ module "alb" {
   subnet_ids      = [module.subnet_public_a.subnet_id, module.subnet_public_c.subnet_id]
   vpc_id          = module.vpc.vpc_id
 
-  target_group_port     = 8080
+  target_group_port     = 80
   target_group_protocol = "HTTP"
 
   health_check_path    = "/health"

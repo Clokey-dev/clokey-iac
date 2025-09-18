@@ -1,7 +1,7 @@
 # EC2 Instance
 module "ec2" {
   source                 = "../../modules/compute/ec2"
-  ami                    = data.aws_ami.amazon_linux_2023.id
+  ami                    = data.aws_ami.ubuntu_latest.id
   instance_type          = "t3.micro"
   subnet_id              = module.subnet_public_a.subnet_id
   name                   = "${local.name_prefix}-api"
@@ -34,6 +34,6 @@ module "ec2" {
 resource "aws_lb_target_group_attachment" "ec2" {
   target_group_arn = module.alb.target_group_arn
   target_id        = module.ec2.instance_id
-  port             = 8080
+  port             = 80
 }
 
