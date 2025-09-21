@@ -5,7 +5,7 @@ data "aws_caller_identity" "current" {}
 module "tf_state_bucket" {
   source = "../modules/storage/s3"
 
-  bucket_name = "clokey-terraform-state-${data.aws_caller_identity.current.account_id}"
+  bucket_name = "clokey-terraform-state-${var.environment}"
   environment = var.environment
   purpose     = "tfstate"
 
