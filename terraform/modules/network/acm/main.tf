@@ -20,8 +20,10 @@ resource "aws_acm_certificate_validation" "main" {
   validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
 
   timeouts {
-    create = "10m"
+    create = "20m"  # 타임아웃을 20분으로 증가
   }
+
+  depends_on = [aws_route53_record.cert_validation]
 }
 
 resource "aws_route53_record" "cert_validation" {

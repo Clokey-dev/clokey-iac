@@ -30,8 +30,8 @@ output "bucket_region" {
 
 output "bucket_website_endpoint" {
   description = "The website endpoint of the bucket"
-  value       = aws_s3_bucket.this.website_endpoint
-  # Note: website_endpoint is deprecated, but kept for backward compatibility
+  value       = aws_s3_bucket.this.website_domain
+  # Note: website_endpoint is deprecated, using website_domain instead
 }
 
 output "bucket_public_url" {

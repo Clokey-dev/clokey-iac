@@ -3,7 +3,7 @@ resource "aws_s3_bucket" "this" {
   bucket = var.bucket_name
 
   tags = merge(var.tags, {
-    Name = "clokey-${var.purpose}-${var.environment}"
+    Name = "clokey-${var.purpose}-${var.environment}-1234"
   })
 }
 

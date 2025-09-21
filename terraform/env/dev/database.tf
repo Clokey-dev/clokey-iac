@@ -8,7 +8,7 @@ module "rds" {
   ]
   storage           = 30
   engine            = "mysql"
-  engine_version    = "8.0.35"
+  engine_version    = "8.0.34"
   instance_class    = "db.t3.micro"
   db_name           = "clokey_db"
   username          = var.rds_username
