@@ -42,7 +42,7 @@ jobs:
           rds_password = "${{ secrets.RDS_PASSWORD }}"
           domain_name = "${{ secrets.PROD_DOMAIN_NAME }}"
           user_data = <<-EOT
-          ${{ secrets.USER_DATA }}
+          $(cat ../../userdata-examples/was-userdata.sh)
           EOT
           EOF
 

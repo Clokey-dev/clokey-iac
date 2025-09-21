@@ -44,7 +44,7 @@ jobs:
           rds_username = "${{ secrets.RDS_USERNAME }}"
           rds_password = "${{ secrets.RDS_PASSWORD }}"
           domain_name = "${{ secrets.DEV_DOMAIN_NAME }}"
-          user_data = "# CI 환경 대체"
+          user_data = "#!/bin/bash\necho 'CI user_data'\napt update -y"
           EOF
 
       - name: Terraform Plan (dev)
