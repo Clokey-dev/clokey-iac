@@ -35,6 +35,20 @@ jobs:
       - name: Terraform Format Check (전체)
         run: terraform fmt -check -recursive
 
+      - name: Create terraform.tfvars for CI
+        working-directory: terraform/env/dev
+        run: |
+          cat > terraform.tfvars << EOF
+          aws_access_key_id = "${{ secrets.DEV_AWS_ACCESS_KEY_ID }}"
+          aws_secret_access_key = "${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}"
+          rds_username = "${{ secrets.RDS_USERNAME }}"
+          rds_password = "${{ secrets.RDS_PASSWORD }}"
+          domain_name = "${{ secrets.DEV_DOMAIN_NAME }}"
+          user_data = <<-EOT
+          ${{ secrets.USER_DATA }}
+          EOT
+          EOF
+
       - name: Terraform Plan (dev)
         id: plan
         working-directory: terraform/env/dev
@@ -43,12 +57,7 @@ jobs:
           terraform plan \
             -input=false \
             -no-color \
-            -var="aws_access_key_id=${{ secrets.DEV_AWS_ACCESS_KEY_ID }}" \
-            -var="aws_secret_access_key=${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}" \
-            -var="rds_username=${{ secrets.RDS_USERNAME }}" \
-            -var="rds_password=${{ secrets.RDS_PASSWORD }}" \
-            -var="domain_name=${{ secrets.DEV_DOMAIN_NAME }}" \
-            -var="user_data=${{ secrets.USER_DATA }}" \
+            -var-file="terraform.tfvars" \
             > plan.txt
 
       - name: Delete previous Terraform plan comments

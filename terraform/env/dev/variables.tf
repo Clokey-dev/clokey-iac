@@ -1,6 +1,16 @@
-# AWS 인증 정보는 환경변수(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)로 자동 처리됨
-
 # 민감한 정보만 변수화 (CI/CD에서 관리)
+variable "aws_access_key_id" {
+  description = "AWS Access Key ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "aws_secret_access_key" {
+  description = "AWS Secret Access Key"
+  type        = string
+  sensitive   = true
+}
+
 variable "rds_username" {
   description = "Username for RDS database"
   type        = string

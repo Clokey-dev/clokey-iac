@@ -32,15 +32,24 @@ jobs:
       - name: Terraform Init (prod)
         run: terraform -chdir=terraform/env/prod init
 
+      - name: Create terraform.tfvars for CI
+        working-directory: terraform/env/prod
+        run: |
+          cat > terraform.tfvars << EOF
+          aws_access_key_id = "${{ secrets.PROD_AWS_ACCESS_KEY_ID }}"
+          aws_secret_access_key = "${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}"
+          rds_username = "${{ secrets.RDS_USERNAME }}"
+          rds_password = "${{ secrets.RDS_PASSWORD }}"
+          domain_name = "${{ secrets.PROD_DOMAIN_NAME }}"
+          user_data = <<-EOT
+          ${{ secrets.USER_DATA }}
+          EOT
+          EOF
+
       - name: Terraform Apply (prod)
         working-directory: terraform/env/prod
         run: |
           terraform apply \
             -auto-approve \
             -input=false \
-            -var="aws_access_key_id=${{ secrets.PROD_AWS_ACCESS_KEY_ID }}" \
-            -var="aws_secret_access_key=${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}" \
-            -var="rds_username=${{ secrets.RDS_USERNAME }}" \
-            -var="rds_password=${{ secrets.RDS_PASSWORD }}" \
-            -var="user_data=${{ secrets.USER_DATA }}" \
-            -var="domain_name=${{ secrets.PROD_DOMAIN_NAME }}"
+            -var-file="terraform.tfvars"
