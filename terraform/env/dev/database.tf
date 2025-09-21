@@ -6,7 +6,7 @@ module "rds" {
     module.subnet_private_a.subnet_id,
     module.subnet_private_c.subnet_id
   ]
-  storage           = 20
+  storage           = 30
   engine            = "mysql"
   engine_version    = "8.0.35"
   instance_class    = "db.t3.micro"
