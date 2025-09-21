@@ -237,6 +237,8 @@ module "route53_zone" {
   create_hosted_zone = true
   domain_name        = var.domain_name
   create_a_record    = false
+
+  tags = local.common_tags
 }
 
 # Route53 - ALB를 A 레코드로 설정 (ALB 생성 후)

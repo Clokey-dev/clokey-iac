@@ -21,12 +21,6 @@ variable "user_data" {
 }
 
 # Route53 설정 (도메인 관련)
-variable "hosted_zone_id" {
-  description = "Route53 hosted zone ID for domain"
-  type        = string
-  default     = null
-}
-
 variable "domain_name" {
   description = "Base domain name for Route53 records"
   type        = string
