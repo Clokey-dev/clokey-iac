@@ -44,9 +44,7 @@ jobs:
           rds_username = "${{ secrets.RDS_USERNAME }}"
           rds_password = "${{ secrets.RDS_PASSWORD }}"
           domain_name = "${{ secrets.DEV_DOMAIN_NAME }}"
-          user_data = <<-EOT
-          ${{ secrets.USER_DATA }}
-          EOT
+          user_data = "# CI 환경 대체"
           EOF
 
       - name: Terraform Plan (dev)
