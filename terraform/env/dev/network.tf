@@ -225,7 +225,9 @@ module "alb" {
   health_check_path    = "/health"
   health_check_matcher = "200"
 
-  certificate_arn = module.acm.certificate_arn
+  # HTTPS 리스너 비활성화 (인증서 검증 완료 후 활성화)
+  create_https_listener = false
+  certificate_arn       = null
 
   tags = local.common_tags
 }
