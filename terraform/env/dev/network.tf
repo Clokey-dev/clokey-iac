@@ -201,10 +201,10 @@ module "sg_alb" {
 module "acm" {
   source = "../../modules/network/acm"
 
-  name_prefix    = local.name_prefix
-  domain_name    = var.domain_name
-  hosted_zone_id = module.route53_zone.hosted_zone_id
-  create_validation = false  # 1단계에서는 검증 비활성화
+  name_prefix       = local.name_prefix
+  domain_name       = var.domain_name
+  hosted_zone_id    = module.route53_zone.hosted_zone_id
+  create_validation = false # 1단계에서는 검증 비활성화
 
   tags = local.common_tags
 }
