@@ -72,6 +72,9 @@ resource "aws_lb_listener" "https" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.main.arn
   }
+
+  # 인증서가 완전히 검증된 후에 리스너 생성
+  depends_on = [var.certificate_arn]
 }
 
 resource "aws_lb_listener_rule" "main" {

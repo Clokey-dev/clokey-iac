@@ -197,13 +197,14 @@ module "sg_alb" {
   ]
 }
 
-# ACM Certificate
+# ACM Certificate (1단계: 인증서만 생성, 검증은 나중에)
 module "acm" {
   source = "../../modules/network/acm"
 
   name_prefix    = local.name_prefix
   domain_name    = var.domain_name
   hosted_zone_id = module.route53_zone.hosted_zone_id
+  create_validation = false  # 1단계에서는 검증 비활성화
 
   tags = local.common_tags
 }

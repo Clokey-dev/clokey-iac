@@ -1,9 +1,14 @@
+# 랜덤 ID 생성 (버킷 이름 고유성 보장)
+resource "random_id" "bucket_suffix" {
+  byte_length = 8
+}
+
 # S3 버킷 생성
 resource "aws_s3_bucket" "this" {
-  bucket = var.bucket_name
+  bucket = "${var.bucket_name}-${random_id.bucket_suffix.hex}"
 
   tags = merge(var.tags, {
-    Name = "clokey-${var.purpose}-${var.environment}-1234"
+    Name = "clokey-${var.purpose}-${var.environment}"
   })
 }
 
@@ -64,7 +69,7 @@ resource "aws_s3_bucket_policy" "public_read" {
 
 # S3 버킷 수명 주기 정책 (선택적)
 resource "aws_s3_bucket_lifecycle_configuration" "this" {
-  count  = var.enable_lifecycle_policy ? 1 : 0
+  count  = var.enable_lifecycle_policy && length(var.lifecycle_rules) > 0 ? 1 : 0
   bucket = aws_s3_bucket.this.id
 
   dynamic "rule" {

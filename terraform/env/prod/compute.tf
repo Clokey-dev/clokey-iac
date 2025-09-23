@@ -10,7 +10,7 @@ module "ec2" {
   purpose                = "was"
 
   # SSH 키 설정 (AWS에서 미리 생성한 키 페어 이름)
-  key_name = "prod-server-key"
+  key_name = "clokey-prod-server-key"
 
   # 퍼블릭 IP 활성화 (웹 서버용)
   associate_public_ip_address = true

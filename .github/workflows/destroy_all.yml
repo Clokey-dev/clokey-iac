@@ -1,0 +1,205 @@
+name: Terraform Destroy All Environments
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_destroy:
+        description: '전체 환경 Destroy를 확인하려면 "DESTROY_ALL_ENVIRONMENTS"를 입력하세요'
+        required: true
+        type: string
+        default: ''
+      reason:
+        description: '전체 환경 삭제 이유를 입력하세요 (필수)'
+        required: true
+        type: string
+        default: ''
+      backup_required:
+        description: 'Production 데이터베이스 백업 상태'
+        required: true
+        type: choice
+        options:
+          - '백업 완료됨'
+          - '백업 불필요'
+          - '백업 진행 중'
+      environments:
+        description: '삭제할 환경을 선택하세요'
+        required: true
+        type: choice
+        options:
+          - 'dev_only'
+          - 'prod_only'
+          - 'all_environments'
+
+jobs:
+  validate-inputs:
+    name: Validate Destroy Inputs
+    runs-on: ubuntu-latest
+    outputs:
+      destroy-dev: ${{ steps.validate.outputs.destroy-dev }}
+      destroy-prod: ${{ steps.validate.outputs.destroy-prod }}
+    
+    steps:
+      - name: Validate destroy confirmation
+        id: validate
+        run: |
+          if [ "${{ github.event.inputs.confirm_destroy }}" != "DESTROY_ALL_ENVIRONMENTS" ]; then
+            echo "❌ 전체 환경 Destroy 확인이 올바르지 않습니다. 'DESTROY_ALL_ENVIRONMENTS'를 정확히 입력해주세요."
+            exit 1
+          fi
+          
+          if [ "${{ github.event.inputs.backup_required }}" = "백업 진행 중" ] && [[ "${{ github.event.inputs.environments }}" == *"prod"* ]]; then
+            echo "❌ Production 환경이 포함되어 있지만 데이터베이스 백업이 완료되지 않았습니다."
+            exit 1
+          fi
+          
+          # 환경별 삭제 여부 결정
+          if [ "${{ github.event.inputs.environments }}" = "dev_only" ]; then
+            echo "destroy-dev=true" >> $GITHUB_OUTPUT
+            echo "destroy-prod=false" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.inputs.environments }}" = "prod_only" ]; then
+            echo "destroy-dev=false" >> $GITHUB_OUTPUT
+            echo "destroy-prod=true" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.inputs.environments }}" = "all_environments" ]; then
+            echo "destroy-dev=true" >> $GITHUB_OUTPUT
+            echo "destroy-prod=true" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "✅ 입력 검증 완료"
+          echo "📝 Destroy 이유: ${{ github.event.inputs.reason }}"
+          echo "🎯 대상 환경: ${{ github.event.inputs.environments }}"
+          echo "💾 백업 상태: ${{ github.event.inputs.backup_required }}"
+
+  destroy-dev:
+    name: Destroy Development Environment
+    runs-on: ubuntu-latest
+    needs: validate-inputs
+    if: needs.validate-inputs.outputs.destroy-dev == 'true'
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.12.2
+
+      - name: Terraform Init (dev)
+        run: terraform -chdir=terraform/env/dev init
+
+      - name: Create terraform.tfvars for destroy
+        working-directory: terraform/env/dev
+        run: |
+          cat > terraform.tfvars << EOF
+          aws_access_key_id = "${{ secrets.DEV_AWS_ACCESS_KEY_ID }}"
+          aws_secret_access_key = "${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}"
+          rds_username = "${{ secrets.RDS_USERNAME }}"
+          rds_password = "${{ secrets.RDS_PASSWORD }}"
+          domain_name = "${{ secrets.DEV_DOMAIN_NAME }}"
+          user_data = "#!/bin/bash\necho 'Destroy 환경 - 간단한 user_data'"
+          EOF
+
+      - name: Terraform Destroy (dev)
+        working-directory: terraform/env/dev
+        run: |
+          echo "🗑️  Development 환경을 삭제합니다..."
+          terraform destroy \
+            -auto-approve \
+            -input=false \
+            -var-file="terraform.tfvars"
+
+      - name: Clean up dev state
+        run: |
+          rm -f terraform/env/dev/terraform.tfvars
+
+  destroy-prod:
+    name: Destroy Production Environment
+    runs-on: ubuntu-latest
+    needs: validate-inputs
+    if: needs.validate-inputs.outputs.destroy-prod == 'true'
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.12.2
+
+      - name: Terraform Init (prod)
+        run: terraform -chdir=terraform/env/prod init
+
+      - name: Create terraform.tfvars for destroy
+        working-directory: terraform/env/prod
+        run: |
+          cat > terraform.tfvars << EOF
+          aws_access_key_id = "${{ secrets.PROD_AWS_ACCESS_KEY_ID }}"
+          aws_secret_access_key = "${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}"
+          rds_username = "${{ secrets.RDS_USERNAME }}"
+          rds_password = "${{ secrets.RDS_PASSWORD }}"
+          domain_name = "${{ secrets.PROD_DOMAIN_NAME }}"
+          user_data = "#!/bin/bash\necho 'Destroy 환경 - 간단한 user_data'"
+          EOF
+
+      - name: Final confirmation pause for production
+        run: |
+          echo "⚠️  PRODUCTION 환경 삭제를 진행합니다!"
+          echo "⚠️  이 작업은 되돌릴 수 없습니다!"
+          echo "⚠️  모든 Production 데이터와 서비스가 삭제됩니다!"
+          echo ""
+          echo "계속하려면 30초 후 자동으로 진행됩니다..."
+          sleep 30
+
+      - name: Terraform Destroy (prod)
+        working-directory: terraform/env/prod
+        run: |
+          echo "🗑️  Production 환경을 삭제합니다..."
+          terraform destroy \
+            -auto-approve \
+            -input=false \
+            -var-file="terraform.tfvars"
+
+      - name: Clean up prod state
+        run: |
+          rm -f terraform/env/prod/terraform.tfvars
+
+  notify-completion:
+    name: Notify Completion
+    runs-on: ubuntu-latest
+    needs: [validate-inputs, destroy-dev, destroy-prod]
+    if: always()
+
+    steps:
+      - name: Report completion
+        run: |
+          echo "🎯 전체 Destroy 작업 완료!"
+          echo "📝 Destroy 이유: ${{ github.event.inputs.reason }}"
+          echo "🎯 대상 환경: ${{ github.event.inputs.environments }}"
+          echo "💾 백업 상태: ${{ github.event.inputs.backup_required }}"
+          echo "👤 실행자: ${{ github.actor }}"
+          echo "🕒 실행 시간: $(date)"
+          echo ""
+          echo "📊 작업 결과:"
+          echo "  - Dev 환경: ${{ needs.destroy-dev.result || 'SKIPPED' }}"
+          echo "  - Prod 환경: ${{ needs.destroy-prod.result || 'SKIPPED' }}"

@@ -1,0 +1,126 @@
+name: Terraform Destroy Production Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_destroy:
+        description: 'Production Destroy를 확인하려면 "DESTROY_PRODUCTION"를 입력하세요'
+        required: true
+        type: string
+        default: ''
+      reason:
+        description: 'Destroy 이유를 입력하세요 (필수)'
+        required: true
+        type: string
+        default: ''
+      backup_required:
+        description: '데이터베이스 백업이 필요한지 확인하세요'
+        required: true
+        type: choice
+        options:
+          - '백업 완료됨'
+          - '백업 불필요'
+          - '백업 진행 중'
+
+jobs:
+  terraform-destroy:
+    name: Terraform Destroy Production Environment
+    runs-on: ubuntu-latest
+
+    # Production 환경은 매우 신중하게 처리해야 합니다
+    # 필요시 추가 승인 프로세스를 구현하세요
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate destroy confirmation and backup
+        run: |
+          if [ "${{ github.event.inputs.confirm_destroy }}" != "DESTROY_PRODUCTION" ]; then
+            echo "❌ Production Destroy 확인이 올바르지 않습니다. 'DESTROY_PRODUCTION'를 정확히 입력해주세요."
+            exit 1
+          fi
+          
+          if [ "${{ github.event.inputs.backup_required }}" = "백업 진행 중" ]; then
+            echo "❌ 데이터베이스 백업이 완료되지 않았습니다. 백업을 먼저 완료해주세요."
+            exit 1
+          fi
+          
+          echo "✅ Production Destroy 확인 완료"
+          echo "📝 Destroy 이유: ${{ github.event.inputs.reason }}"
+          echo "💾 백업 상태: ${{ github.event.inputs.backup_required }}"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.12.2
+
+      - name: Terraform Init (prod)
+        run: terraform -chdir=terraform/env/prod init
+
+      - name: Create terraform.tfvars for destroy
+        working-directory: terraform/env/prod
+        run: |
+          cat > terraform.tfvars << EOF
+          aws_access_key_id = "${{ secrets.PROD_AWS_ACCESS_KEY_ID }}"
+          aws_secret_access_key = "${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}"
+          rds_username = "${{ secrets.RDS_USERNAME }}"
+          rds_password = "${{ secrets.RDS_PASSWORD }}"
+          domain_name = "${{ secrets.PROD_DOMAIN_NAME }}"
+          user_data = "#!/bin/bash\necho 'Destroy 환경 - 간단한 user_data'"
+          EOF
+
+      - name: Terraform Plan Destroy (prod)
+        working-directory: terraform/env/prod
+        run: |
+          echo "🔍 Production 환경에서 Destroy할 리소스를 확인합니다..."
+          terraform plan -destroy \
+            -input=false \
+            -no-color \
+            -var-file="terraform.tfvars" \
+            > destroy_plan.txt
+          
+          echo "📋 Production Destroy 계획:"
+          cat destroy_plan.txt
+
+      - name: Final confirmation pause
+        run: |
+          echo "⚠️  PRODUCTION 환경 삭제를 진행합니다!"
+          echo "⚠️  이 작업은 되돌릴 수 없습니다!"
+          echo "⚠️  모든 Production 데이터와 서비스가 삭제됩니다!"
+          echo ""
+          echo "계속하려면 30초 후 자동으로 진행됩니다..."
+          sleep 30
+
+      - name: Terraform Destroy (prod)
+        working-directory: terraform/env/prod
+        run: |
+          echo "🗑️  Production 환경의 모든 리소스를 삭제합니다..."
+          terraform destroy \
+            -auto-approve \
+            -input=false \
+            -var-file="terraform.tfvars"
+
+      - name: Clean up local state
+        run: |
+          echo "🧹 로컬 상태 파일을 정리합니다..."
+          rm -f terraform/env/prod/terraform.tfvars
+          rm -f terraform/env/prod/destroy_plan.txt
+
+      - name: Notify completion
+        run: |
+          echo "✅ Production 환경 Destroy 완료!"
+          echo "📝 Destroy 이유: ${{ github.event.inputs.reason }}"
+          echo "💾 백업 상태: ${{ github.event.inputs.backup_required }}"
+          echo "👤 실행자: ${{ github.actor }}"
+          echo "🕒 실행 시간: $(date)"

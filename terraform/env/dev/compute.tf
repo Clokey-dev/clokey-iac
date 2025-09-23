@@ -9,8 +9,8 @@ module "ec2" {
   environment            = local.environment
   purpose                = "was"
 
-  # SSH 키 설정 (AWS에서 미리 생성한 키 페어 이름)
-  key_name = "dev-server-key"
+  # SSH 키 설정 (AWS 콘솔에서 미리 생성한 키 페어 사용)
+  key_name = "clokey-dev-server-key"
 
   # 퍼블릭 IP 활성화 (웹 서버용)
   associate_public_ip_address = true

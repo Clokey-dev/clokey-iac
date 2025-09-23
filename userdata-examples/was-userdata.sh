@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# 로그 파일 설정
+LOG_FILE="/var/log/userdata.log"
+exec > >(tee -a $LOG_FILE) 2>&1
+
+echo "=========================================="
+echo "UserData 스크립트 시작: $(date)"
+echo "=========================================="
+
 # 시스템 업데이트
 echo "시스템 업데이트 시작..."
 apt update -y
@@ -8,20 +16,41 @@ apt upgrade -y
 # Java 21 설치
 echo "Java 21 설치 중..."
 apt install -y openjdk-21-jdk
+if [ $? -eq 0 ]; then
+    echo "✅ Java 21 설치 완료"
+else
+    echo "❌ Java 21 설치 실패"
+fi
 
 # Docker 설치
 echo "Docker 설치 중..."
 apt install -y docker.io
+if [ $? -eq 0 ]; then
+    echo "✅ Docker 설치 완료"
+else
+    echo "❌ Docker 설치 실패"
+fi
 
 # Docker 서비스 시작 및 자동 시작 설정
+echo "Docker 서비스 시작 중..."
 systemctl start docker
 systemctl enable docker
+if [ $? -eq 0 ]; then
+    echo "✅ Docker 서비스 시작 완료"
+else
+    echo "❌ Docker 서비스 시작 실패"
+fi
 
 # Docker Compose v2 설치
 echo "Docker Compose v2 설치 중..."
 mkdir -p ~/.docker/cli-plugins/
 curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
 chmod +x ~/.docker/cli-plugins/docker-compose
+if [ $? -eq 0 ]; then
+    echo "✅ Docker Compose v2 설치 완료"
+else
+    echo "❌ Docker Compose v2 설치 실패"
+fi
 
 # Swap 메모리 설정 (2GB)
 echo "Swap 메모리 설정 중..."
@@ -29,6 +58,11 @@ fallocate -l 2G /swapfile
 chmod 600 /swapfile
 mkswap /swapfile
 swapon /swapfile
+if [ $? -eq 0 ]; then
+    echo "✅ Swap 메모리 설정 완료"
+else
+    echo "❌ Swap 메모리 설정 실패"
+fi
 
 # Swap 영구 설정
 echo '/swapfile none swap sw 0 0' >> /etc/fstab
@@ -49,9 +83,9 @@ docker run -d \
 echo "Redis 컨테이너 상태 확인 중..."
 sleep 5
 if docker ps | grep -q redis-container; then
-  echo "Redis 컨테이너가 성공적으로 시작되었습니다."
+  echo "✅ Redis 컨테이너가 성공적으로 시작되었습니다."
 else
-  echo "Redis 컨테이너 시작에 실패했습니다."
+  echo "❌ Redis 컨테이너 시작에 실패했습니다."
 fi
 
 # EC2 재시작 시 자동 설정을 위한 systemd 서비스 생성
@@ -84,6 +118,11 @@ EOF
 # 서비스 활성화
 systemctl daemon-reload
 systemctl enable clokey-setup.service
+if [ $? -eq 0 ]; then
+    echo "✅ 자동 재시작 서비스 활성화 완료"
+else
+    echo "❌ 자동 재시작 서비스 활성화 실패"
+fi
 
 # 설치 완료 메시지
 echo "=========================================="
@@ -94,4 +133,7 @@ echo "Docker Compose 버전: $(docker compose version)"
 echo "Swap 메모리: $(swapon --show | grep /swapfile | awk '{print $3}')"
 echo "Redis 컨테이너 상태: $(docker ps --filter name=redis-container --format 'table {{.Status}}')"
 echo "자동 재시작 서비스: $(systemctl is-enabled clokey-setup.service)"
+echo "=========================================="
+echo "UserData 스크립트 완료: $(date)"
+echo "로그 파일 위치: $LOG_FILE"
 echo "=========================================="
