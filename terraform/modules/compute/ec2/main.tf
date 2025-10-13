@@ -12,7 +12,7 @@ resource "aws_instance" "this" {
   monitoring                           = var.monitoring
 
   # 사용자 데이터 설정 (변수로 주입받거나 기본 파일 사용)
-  user_data                   = var.user_data != null ? var.user_data : file("${path.module}/userdata.sh")
+  user_data_base64            = var.user_data != null ? base64encode(var.user_data) : null
   user_data_replace_on_change = true # UserData 변경 시 인스턴스 교체
 
   # 루트 볼륨 설정
