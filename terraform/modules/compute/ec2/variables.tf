@@ -109,7 +109,7 @@ variable "monitoring" {
 
 # 사용자 데이터 설정
 variable "user_data" {
-  description = "User data script content. If null, uses the default userdata.sh file in the module."
+  description = "User data script content (base64 encoded). Use filebase64() function to encode the file."
   type        = string
   default     = null
   sensitive   = true

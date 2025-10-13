@@ -12,4 +12,5 @@ availability_zone  = "ap-northeast-2a"
 # domain_name은 secret.tfvars에서 관리
 
 # User Data (기본값 - 민감한 정보는 secret.tfvars에서 관리)
-user_data = file("../../../userdata-examples/was-userdata.sh")
+# filebase64()를 사용하여 파일을 base64로 인코딩하여 전달
+user_data = filebase64("../../../userdata-examples/was-userdata.sh")
