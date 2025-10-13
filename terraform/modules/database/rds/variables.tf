@@ -22,7 +22,6 @@ variable "password" {
   description = "Password for RDS database"
   type        = string
   sensitive   = true
-  default     = null
 }
 
 variable "security_group_id" { type = string }
