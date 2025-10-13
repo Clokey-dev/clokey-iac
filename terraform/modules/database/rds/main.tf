@@ -13,18 +13,19 @@ resource "aws_db_parameter_group" "main" {
     }
   }
 
-  tags = merge(var.tags, { Name = "clokey-${var.purpose}-${var.environment}-pg" })
+  tags = merge(var.tags, { Name = "${var.name}-parameter-group" })
 }
 
 # DB 서브넷 그룹
 resource "aws_db_subnet_group" "this" {
   name       = var.name
   subnet_ids = var.subnet_ids
-  tags       = merge(var.tags, { Name = "clokey-${var.purpose}-${var.environment}" })
+  tags       = merge(var.tags, { Name = var.name })
 }
 
 # RDS 인스턴스
 resource "aws_db_instance" "this" {
+  identifier        = var.name
   allocated_storage = var.storage
   engine            = var.engine
   engine_version    = var.engine_version

@@ -1,11 +1,6 @@
-# 랜덤 ID 생성 (버킷 이름 고유성 보장)
-resource "random_id" "bucket_suffix" {
-  byte_length = 8
-}
-
 # S3 버킷 생성
 resource "aws_s3_bucket" "this" {
-  bucket = "${var.bucket_name}-${random_id.bucket_suffix.hex}"
+  bucket = var.bucket_name
 
   tags = merge(var.tags, {
     Name = var.bucket_name
