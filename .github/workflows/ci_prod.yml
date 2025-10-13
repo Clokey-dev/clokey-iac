@@ -35,16 +35,15 @@ jobs:
       - name: Terraform Format Check (전체 코드 기준)
         run: terraform fmt -check -recursive
 
-      - name: Create terraform.tfvars for CI
+      - name: Create terraform.secret.tfvars for CI
         working-directory: terraform/env/prod
         run: |
-          cat > terraform.tfvars << EOF
+          cat > terraform.secret.tfvars << EOF
           aws_access_key_id = "${{ secrets.PROD_AWS_ACCESS_KEY_ID }}"
           aws_secret_access_key = "${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}"
           rds_username = "${{ secrets.RDS_USERNAME }}"
           rds_password = "${{ secrets.RDS_PASSWORD }}"
           domain_name = "${{ secrets.PROD_DOMAIN_NAME }}"
-          user_data = "#!/bin/bash\necho 'CI user_data'\napt update -y"
           EOF
 
       - name: Terraform Plan (prod)
@@ -54,7 +53,7 @@ jobs:
           terraform plan \
             -input=false \
             -no-color \
-            -var-file="terraform.tfvars" \
+            -var-file="terraform.secret.tfvars" \
             > plan.txt
 
       - name: Delete previous Terraform plan comments

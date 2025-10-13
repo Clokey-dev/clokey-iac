@@ -34,18 +34,15 @@ jobs:
       - name: Terraform Init (dev)
         run: terraform -chdir=terraform/env/dev init
 
-      - name: Create terraform.tfvars for CI
+      - name: Create terraform.secret.tfvars for CD
         working-directory: terraform/env/dev
         run: |
-          cat > terraform.tfvars << EOF
+          cat > terraform.secret.tfvars << EOF
           aws_access_key_id = "${{ secrets.DEV_AWS_ACCESS_KEY_ID }}"
           aws_secret_access_key = "${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}"
           rds_username = "${{ secrets.RDS_USERNAME }}"
           rds_password = "${{ secrets.RDS_PASSWORD }}"
           domain_name = "${{ secrets.DEV_DOMAIN_NAME }}"
-          user_data = <<-EOT
-          $(cat ../../userdata-examples/was-userdata.sh)
-          EOT
           EOF
 
       - name: Terraform Apply (dev)
@@ -54,4 +51,4 @@ jobs:
           terraform apply \
             -auto-approve \
             -input=false \
-            -var-file="terraform.tfvars"
+            -var-file="terraform.secret.tfvars"
