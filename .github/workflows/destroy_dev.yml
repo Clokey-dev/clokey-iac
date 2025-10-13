@@ -1,0 +1,100 @@
+name: Terraform Destroy Development Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_destroy:
+        description: 'Destroy를 확인하려면 "DESTROY"를 입력하세요'
+        required: true
+        type: string
+        default: ''
+      reason:
+        description: 'Destroy 이유를 입력하세요'
+        required: true
+        type: string
+        default: ''
+
+jobs:
+  terraform-destroy:
+    name: Terraform Destroy Dev Environment
+    runs-on: ubuntu-latest
+
+    # 보안을 위해 수동 승인이 필요한 환경에서는 이 워크플로우를 비활성화하거나 추가 승인 프로세스를 추가하세요
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate destroy confirmation
+        run: |
+          if [ "${{ github.event.inputs.confirm_destroy }}" != "DESTROY" ]; then
+            echo "❌ Destroy 확인이 올바르지 않습니다. 'DESTROY'를 정확히 입력해주세요."
+            exit 1
+          fi
+          echo "✅ Destroy 확인 완료: ${{ github.event.inputs.reason }}"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.12.2
+
+      - name: Terraform Init (dev)
+        run: terraform -chdir=terraform/env/dev init
+
+      - name: Create terraform.tfvars for destroy
+        working-directory: terraform/env/dev
+        run: |
+          cat > terraform.tfvars << EOF
+          aws_access_key_id = "${{ secrets.DEV_AWS_ACCESS_KEY_ID }}"
+          aws_secret_access_key = "${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}"
+          rds_username = "${{ secrets.RDS_USERNAME }}"
+          rds_password = "${{ secrets.RDS_PASSWORD }}"
+          domain_name = "${{ secrets.DEV_DOMAIN_NAME }}"
+          user_data = "#!/bin/bash\necho 'Destroy 환경 - 간단한 user_data'"
+          EOF
+
+      - name: Terraform Plan Destroy (dev)
+        working-directory: terraform/env/dev
+        run: |
+          echo "🔍 Destroy할 리소스를 확인합니다..."
+          terraform plan -destroy \
+            -input=false \
+            -no-color \
+            -var-file="terraform.tfvars" \
+            > destroy_plan.txt
+          
+          echo "📋 Destroy 계획:"
+          cat destroy_plan.txt
+
+      - name: Terraform Destroy (dev)
+        working-directory: terraform/env/dev
+        run: |
+          echo "⚠️  Dev 환경의 모든 리소스를 삭제합니다..."
+          echo "이 작업은 되돌릴 수 없습니다!"
+          terraform destroy \
+            -auto-approve \
+            -input=false \
+            -var-file="terraform.tfvars"
+
+      - name: Clean up local state
+        run: |
+          echo "🧹 로컬 상태 파일을 정리합니다..."
+          rm -f terraform/env/dev/terraform.tfvars
+          rm -f terraform/env/dev/destroy_plan.txt
+
+      - name: Notify completion
+        run: |
+          echo "✅ Dev 환경 Destroy 완료!"
+          echo "📝 Destroy 이유: ${{ github.event.inputs.reason }}"
+          echo "👤 실행자: ${{ github.actor }}"
+          echo "🕒 실행 시간: $(date)"
