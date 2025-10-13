@@ -24,8 +24,7 @@ resource "aws_instance" "this" {
   }
 
   tags = merge(var.tags, {
-    Name         = "clokey-${var.purpose}-${var.environment}"
-    InstanceName = var.name
+    Name = var.name
   })
 }
 

@@ -5,8 +5,7 @@ resource "aws_subnet" "this" {
   map_public_ip_on_launch = var.map_public_ip
 
   tags = merge(var.tags, {
-    Name       = "clokey-${var.purpose}-${var.environment}"
-    SubnetName = var.name
+    Name = var.name
   })
 }
 

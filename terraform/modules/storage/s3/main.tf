@@ -8,7 +8,7 @@ resource "aws_s3_bucket" "this" {
   bucket = "${var.bucket_name}-${random_id.bucket_suffix.hex}"
 
   tags = merge(var.tags, {
-    Name = "clokey-${var.purpose}-${var.environment}"
+    Name = var.bucket_name
   })
 }
 

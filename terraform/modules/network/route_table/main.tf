@@ -2,8 +2,7 @@ resource "aws_route_table" "this" {
   vpc_id = var.vpc_id
 
   tags = merge(var.tags, {
-    Name           = var.environment != null ? "clokey-${var.purpose}-${var.environment}" : "clokey-${var.purpose}"
-    RouteTableName = var.name
+    Name = var.name
   })
 }
 

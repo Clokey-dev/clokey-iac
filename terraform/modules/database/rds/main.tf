@@ -60,5 +60,5 @@ resource "aws_db_instance" "this" {
   deletion_protection        = var.deletion_protection
   auto_minor_version_upgrade = var.auto_minor_version_upgrade
 
-  tags = merge(var.tags, { Name = "clokey-${var.purpose}-${var.environment}" })
+  tags = merge(var.tags, { Name = var.name })
 }

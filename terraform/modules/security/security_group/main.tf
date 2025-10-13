@@ -26,6 +26,6 @@ resource "aws_security_group" "this" {
   }
 
   tags = merge(var.tags, {
-    Name = "clokey-${var.purpose}-${var.environment}"
+    Name = var.security_group_name
   })
 }
