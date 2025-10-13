@@ -14,7 +14,7 @@ resource "aws_instance" "this" {
   # 사용자 데이터 설정 (변수로 주입받거나 기본 파일 사용)
   # AWS는 user_data를 base64로 인코딩하여 전달해야 함
   user_data_base64            = var.user_data != null ? var.user_data : null
-  user_data_replace_on_change = true # UserData 변경 시 인스턴스 교체
+  user_data_replace_on_change = false # UserData 변경해도도 인스턴스 유지 (수동 재시작 필요)
 
   # 루트 볼륨 설정
   root_block_device {
