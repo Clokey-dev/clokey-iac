@@ -1,9 +1,11 @@
 # VPC
 module "vpc" {
-  source     = "../../modules/network/vpc"
-  cidr_block = "10.0.0.0/16"
-  name       = "${local.name_prefix}-vpc"
-  purpose    = "main"
+  source      = "../../modules/network/vpc"
+  cidr_block  = "10.0.0.0/16"
+  name        = "${local.name_prefix}-vpc"
+  purpose     = "main"
+  environment = local.environment
+  tags        = local.common_tags
 }
 
 # Internet Gateway
