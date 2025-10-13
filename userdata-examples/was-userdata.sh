@@ -41,6 +41,9 @@ else
     echo "❌ Java 21 설치 실패"
 fi
 
+# MySQL 클라이언트 설치
+sudo apt install mysql-client-core-8.0
+
 # Docker 설치
 echo "Docker 설치 중..."
 sudo apt install -y docker.io

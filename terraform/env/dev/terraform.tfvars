@@ -11,4 +11,4 @@ availability_zone  = "ap-northeast-2a"
 # domain_name은 secret.tfvars에서 관리
 
 # User Data (기본값 - 민감한 정보는 secret.tfvars에서 관리)
-user_data = file("../../userdata-examples/was-userdata.sh")
+user_data = file("../../../userdata-examples/was-userdata.sh")
