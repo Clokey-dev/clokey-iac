@@ -1,7 +1,7 @@
 # S3 Bucket
 module "s3" {
   source      = "../../modules/storage/s3"
-  bucket_name = "${local.name_prefix}-bucket"
+  bucket_name = "prod-clokey-storage-bucket"
   environment = local.environment
   purpose     = "storage"
 
