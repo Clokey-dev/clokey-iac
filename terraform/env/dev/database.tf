@@ -12,6 +12,7 @@ module "rds" {
   instance_class    = "db.t3.micro"
   db_name           = "clokey_db"
   username          = var.rds_username
+  password          = var.rds_password
   security_group_id = module.sg_rds.security_group_id
   environment       = local.environment
   purpose           = "app"

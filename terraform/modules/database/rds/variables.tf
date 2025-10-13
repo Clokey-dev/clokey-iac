@@ -18,6 +18,13 @@ variable "db_name" { type = string }
 
 variable "username" { type = string }
 
+variable "password" {
+  description = "Password for RDS database"
+  type        = string
+  sensitive   = true
+  default     = null
+}
+
 variable "security_group_id" { type = string }
 
 variable "environment" {
