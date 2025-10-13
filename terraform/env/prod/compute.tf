@@ -26,8 +26,8 @@ module "ec2" {
   # 종료 시 중지 (삭제하지 않음)
   instance_initiated_shutdown_behavior = "stop"
 
-  # 사용자 데이터 (GitHub Secrets에서 주입)
-  user_data = var.user_data
+  # 사용자 데이터 (locals에서 로드된 base64 인코딩된 스크립트)
+  user_data = local.user_data_base64
 }
 
 # ALB Target Group 추가

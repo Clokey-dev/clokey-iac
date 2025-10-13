@@ -24,13 +24,6 @@ variable "rds_password" {
   sensitive   = true
 }
 
-variable "user_data" {
-  description = "Custom user data script for EC2 instances"
-  type        = string
-  default     = null
-  sensitive   = true
-}
-
 # Route53 설정 (도메인 관련)
 variable "domain_name" {
   description = "Base domain name for Route53 records"
