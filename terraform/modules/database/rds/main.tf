@@ -61,5 +61,9 @@ resource "aws_db_instance" "this" {
   deletion_protection        = var.deletion_protection
   auto_minor_version_upgrade = var.auto_minor_version_upgrade
 
+  # 인스턴스 교체를 위한 설정
+  apply_immediately        = true
+  delete_automated_backups = true
+
   tags = merge(var.tags, { Name = var.name })
 }
