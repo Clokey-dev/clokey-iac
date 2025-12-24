@@ -23,10 +23,3 @@ variable "rds_password" {
   sensitive   = true
 }
 
-# Route53 설정 (도메인 관련)
-variable "domain_name" {
-  description = "Base domain name for Route53 records"
-  type        = string
-  default     = "example.com"
-  sensitive   = true
-}

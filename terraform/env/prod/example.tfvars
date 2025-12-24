@@ -12,7 +12,3 @@ availability_zone  = "ap-northeast-2a"
 # RDS Configuration
 rds_username = "admin" # 실제 환경에서는 더 복잡한 비밀번호 사용
 
-# Route53 Configuration
-# hosted_zone_id = "YOUR_HOSTED_ZONE_ID"  # 도메인의 hosted zone ID
-# domain_name = "yourdomain.com"  # 실제 도메인으로 변경
-

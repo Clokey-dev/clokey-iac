@@ -7,8 +7,5 @@ availability_zone  = "ap-northeast-2a"
 # RDS 설정 (기본값 - 민감한 정보는 secret.tfvars에서 관리)
 # rds_username은 secret.tfvars에서 관리
 
-# Route53 설정 (기본값 - 민감한 정보는 secret.tfvars에서 관리)
-# domain_name은 secret.tfvars에서 관리
-
 # User Data (기본값 - 민감한 정보는 secret.tfvars에서 관리)
 # userdata는 locals.tf에서 filebase64() 함수로 로드됨

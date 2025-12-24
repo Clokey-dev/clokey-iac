@@ -98,12 +98,20 @@ module "sg_ec2" {
 
   ingress_rules = [
     {
-      from_port                = 80
-      to_port                  = 80
-      protocol                 = "tcp"
-      use_cidr                 = false
-      use_sg                   = true
-      source_security_group_id = module.sg_alb.security_group_id
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      use_cidr    = true
+      use_sg      = false
+      cidr_blocks = ["0.0.0.0/0"]
+    },
+    {
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      use_cidr    = true
+      use_sg      = false
+      cidr_blocks = ["0.0.0.0/0"]
     },
     {
       from_port   = 22
@@ -159,105 +167,4 @@ module "sg_rds" {
   ]
 }
 
-# ALB Security Group
-module "sg_alb" {
-  source = "../../modules/security/security_group"
-  vpc_id = module.vpc.vpc_id
-
-  environment         = local.environment
-  purpose             = "alb"
-  security_group_name = "${local.name_prefix}-sg-alb"
-
-  ingress_rules = [
-    {
-      from_port   = 80
-      to_port     = 80
-      protocol    = "tcp"
-      use_cidr    = true
-      use_sg      = false
-      cidr_blocks = ["0.0.0.0/0"]
-    },
-    {
-      from_port   = 443
-      to_port     = 443
-      protocol    = "tcp"
-      use_cidr    = true
-      use_sg      = false
-      cidr_blocks = ["0.0.0.0/0"]
-    }
-  ]
-
-  egress_rules = [
-    {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      use_cidr    = true
-      use_sg      = false
-      cidr_blocks = ["0.0.0.0/0"]
-    }
-  ]
-}
-
-# ACM Certificate
-module "acm" {
-  source = "../../modules/network/acm"
-
-  name_prefix    = local.name_prefix
-  domain_name    = var.domain_name
-  hosted_zone_id = module.route53_zone.hosted_zone_id
-
-  tags = local.common_tags
-}
-
-# Application Load Balancer
-module "alb" {
-  source = "../../modules/network/alb"
-
-  name_prefix     = local.name_prefix
-  internal        = false
-  security_groups = [module.sg_alb.security_group_id]
-  subnet_ids      = [module.subnet_public_a.subnet_id, module.subnet_public_c.subnet_id]
-  vpc_id          = module.vpc.vpc_id
-
-  target_group_port     = 80
-  target_group_protocol = "HTTP"
-
-  health_check_path    = "/health"
-  health_check_matcher = "200"
-
-  certificate_arn = module.acm.certificate_arn
-
-  tags = local.common_tags
-}
-
-# Route53 - Hosted Zone 생성
-module "route53_zone" {
-  source = "../../modules/network/route53"
-
-  # 새로운 hosted zone 생성
-  create_hosted_zone = true
-  domain_name        = var.domain_name
-  create_a_record    = false
-
-  tags = local.common_tags
-}
-
-# Route53 - ALB를 A 레코드로 설정 (ALB 생성 후)
-module "route53_record" {
-  source = "../../modules/network/route53"
-
-  # 기존 hosted zone 사용
-  create_hosted_zone = false
-  hosted_zone_id     = module.route53_zone.hosted_zone_id
-
-  # A 레코드 생성 (ALB로 변경)
-  create_a_record = true
-  record_name     = "${local.environment}.${var.domain_name}"
-  target_alias    = module.alb.load_balancer_dns_name
-  target_zone_id  = module.alb.load_balancer_zone_id
-  ttl             = 300
-
-  depends_on = [module.alb]
-}
 
