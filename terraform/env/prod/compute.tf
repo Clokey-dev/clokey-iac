@@ -20,9 +20,6 @@ module "ec2" {
   root_volume_type      = "gp3"
   root_volume_encrypted = true
 
-  # 종료 보호 활성화 (프로덕션 환경)
-  disable_api_termination = true
-
   # 종료 시 중지 (삭제하지 않음)
   instance_initiated_shutdown_behavior = "stop"
 
