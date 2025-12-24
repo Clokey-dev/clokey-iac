@@ -20,20 +20,10 @@ module "ec2" {
   root_volume_type      = "gp3"
   root_volume_encrypted = true
 
-  # 종료 보호 활성화 (프로덕션 환경)
-  disable_api_termination = true
-
   # 종료 시 중지 (삭제하지 않음)
   instance_initiated_shutdown_behavior = "stop"
 
   # 사용자 데이터 (locals에서 로드된 base64 인코딩된 스크립트)
   user_data = local.user_data_base64
-}
-
-# ALB Target Group 추가
-resource "aws_lb_target_group_attachment" "ec2" {
-  target_group_arn = module.alb.target_group_arn
-  target_id        = module.ec2.instance_id
-  port             = 80
 }
 

@@ -114,6 +114,16 @@ variable "create_http_listener" {
   default     = true
 }
 
+variable "http_listener_action_type" {
+  description = "Action type for HTTP listener: 'forward' or 'redirect'"
+  type        = string
+  default     = "redirect"
+  validation {
+    condition     = contains(["forward", "redirect"], var.http_listener_action_type)
+    error_message = "http_listener_action_type must be either 'forward' or 'redirect'."
+  }
+}
+
 variable "create_https_listener" {
   description = "Whether to create HTTPS listener"
   type        = bool
