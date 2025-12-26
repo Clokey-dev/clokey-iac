@@ -39,6 +39,8 @@ jobs:
           aws_secret_access_key = "${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}"
           rds_username = "${{ secrets.RDS_USERNAME }}"
           rds_password = "${{ secrets.RDS_PASSWORD }}"
+          domain_name = "${{ secrets.DEV_DOMAIN_NAME }}"
+          email = "${{ secrets.LETSENCRYPT_EMAIL }}"
           EOF
 
       - name: Terraform Apply (dev)
