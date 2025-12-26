@@ -17,7 +17,10 @@ locals {
   state_bucket_name = "clokey-terraform-state-116541188992"
   state_key         = "prod/terraform.tfstate"
 
-  # UserData 설정 (파일에서 base64로 인코딩하여 로드)
-  user_data_base64 = filebase64("${path.module}/../../../userdata-examples/was-userdata.sh")
+  # UserData 설정 (템플릿 파일에서 변수 주입 후 base64 인코딩)
+  user_data_base64 = base64encode(templatefile("${path.module}/../../../userdata-examples/was-userdata-prod.sh", {
+    domain_name = var.domain_name
+    email        = var.email
+  }))
 }
 
