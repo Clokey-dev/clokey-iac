@@ -200,7 +200,7 @@ terraform apply -var-file="terraform.tfvars"
 - **Route53**: DNS 관리 및 A 레코드 자동 설정
 
 ### Security
-- **Security Groups**: EC2, RDS, ALB용 보안 그룹
+- **Security Groups**: EC2, RDS용 보안 그룹
 - **NACLs**: 서브넷 레벨 네트워크 제어
 
 ### Storage

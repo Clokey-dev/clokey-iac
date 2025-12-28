@@ -22,17 +22,3 @@ variable "rds_password" {
   type        = string
   sensitive   = true
 }
-
-variable "domain_name" {
-  description = "Domain name for the application (from GitHub Secrets)"
-  type        = string
-  sensitive   = true
-}
-
-variable "email" {
-  description = "Email address for Let's Encrypt certificate (from GitHub Secrets)"
-  type        = string
-  sensitive   = true
-  default     = "aa020228@gmail.com"
-}
-
